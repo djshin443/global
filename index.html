@@ -909,6 +909,26 @@
         .hidden {
             display: none !important;
         }
+		
+		.wrong-count {
+			font-size: clamp(1rem, 2.5vw, 1.1rem);
+			color: rgba(255,255,255,0.9);
+			font-weight: 500;
+			background: var(--glass-bg);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.5rem);
+			border-radius: 20px;
+			border: 1px solid var(--glass-border);
+			box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+		}
+		
+		.score-display {
+			font-weight: 700;
+			color: #ffeaa7;
+			font-size: 1.1em;
+		}
+		
     </style>
 </head>
 <body>
@@ -1046,9 +1066,9 @@
             
             <div class="quiz-container">
                 <div class="quiz-info">
-                    <div class="score" id="score">점수: 0/0</div>
-                    <!--<div class="question-number" id="questionNumber">문제 1/195</div>-->
-                </div>
+					<div class="score" id="score">점수: 0/1000</div>
+					<div class="wrong-count" id="wrongCount">남은 기회: 10/10</div>
+				</div>
 
                 <div class="flag-display" id="flagDisplay">
                     <div class="loading">문제를 준비중...</div>
