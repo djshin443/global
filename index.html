@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>전 세계 국기 이미지</title>
+    <title>🌍 국기 퀴즈 게임</title>
     <style>
         * {
             margin: 0;
@@ -11,632 +12,1007 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+```
+    body {
+        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+    }
 
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 메인 헤더 */
+    .main-header {
+        text-align: center;
+        margin-bottom: 80px;
+        color: white;
+        animation: fadeInDown 1.2s ease-out;
+        position: relative;
+    }
+
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 6px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+        border-radius: 3px;
+        animation: shimmer 3s ease-in-out infinite;
+    }
+
+    .main-header h1 {
+        font-size: 4.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #ffffff 0%, #e8f4fd 25%, #ffffff 50%, #ffeaa7 75%, #ffffff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        background-size: 400% 400%;
+        animation: gradientShift 4s ease-in-out infinite, textPulse 2s ease-in-out infinite;
+        text-shadow: 0 4px 20px rgba(255,255,255,0.3);
+        letter-spacing: -2px;
+        position: relative;
+    }
+
+    .main-header h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        border-radius: 2px;
+        animation: expandLine 1.5s ease-out 0.5s both;
+    }
+
+    .subtitle {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        opacity: 0.95;
+        background: linear-gradient(45deg, #ffffff, #e8f4fd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: subtitleFade 1.5s ease-out 0.8s both;
+    }
+
+    .stats-info {
+        font-size: 1.1rem;
+        font-weight: 500;
+        opacity: 0.9;
+        background: rgba(255,255,255,0.15);
+        padding: 15px 30px;
+        border-radius: 50px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.2);
+        display: inline-block;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        animation: statsSlide 1.8s ease-out 1.2s both;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stats-info::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        animation: statsShimmer 3s ease-in-out infinite 2s;
+    }
+
+    .floating-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .floating-flag {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0.1;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-flag:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .floating-flag:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+    .floating-flag:nth-child(3) { top: 60%; left: 8%; animation-delay: 2s; }
+    .floating-flag:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 3s; }
+    .floating-flag:nth-child(5) { bottom: 40%; left: 20%; animation-delay: 4s; }
+
+    /* 메인 메뉴 */
+    .main-menu {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 50px;
+        width: 100%;
+        max-width: 900px;
+        animation: fadeInUp 1.2s ease-out 0.6s both;
+    }
+
+    .category-card {
+        background: rgba(255,255,255,0.98);
+        backdrop-filter: blur(30px);
+        border-radius: 30px;
+        padding: 50px 40px;
+        text-align: center;
+        box-shadow: 
+            0 25px 50px rgba(0,0,0,0.15),
+            0 10px 20px rgba(0,0,0,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.8);
+        cursor: pointer;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 2px solid rgba(255,255,255,0.2);
+        position: relative;
+        overflow: hidden;
+        transform: translateY(0);
+    }
+
+    .category-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, 
+            rgba(102,126,234,0.05) 0%, 
+            rgba(118,75,162,0.05) 50%, 
+            rgba(240,147,251,0.05) 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .category-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, 
+            transparent 30%, 
+            rgba(255,255,255,0.1) 50%, 
+            transparent 70%);
+        transform: rotate(45deg) translateX(-100%);
+        transition: transform 0.8s ease;
+    }
+
+    .category-card:hover::before {
+        opacity: 1;
+    }
+
+    .category-card:hover::after {
+        transform: rotate(45deg) translateX(100%);
+    }
+
+    .category-card:hover {
+        transform: translateY(-20px) scale(1.05);
+        box-shadow: 
+            0 40px 80px rgba(102,126,234,0.25),
+            0 20px 40px rgba(118,75,162,0.15),
+            inset 0 1px 0 rgba(255,255,255,0.9);
+        border-color: rgba(102,126,234,0.3);
+    }
+
+    .category-icon {
+        font-size: 5rem;
+        margin-bottom: 25px;
+        filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
+        animation: iconFloat 3s ease-in-out infinite;
+        position: relative;
+        z-index: 2;
+    }
+
+    .category-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .category-description {
+        font-size: 1.2rem;
+        color: #4a5568;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        font-weight: 400;
+        position: relative;
+        z-index: 2;
+    }
+
+    .mode-count {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        display: inline-block;
+        box-shadow: 0 6px 20px rgba(102,126,234,0.3);
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover .mode-count {
+        transform: scale(1.1);
+        box-shadow: 0 8px 30px rgba(102,126,234,0.5);
+    }
+
+    /* 서브 메뉴 */
+    .sub-menu {
+        width: 100%;
+        max-width: 900px;
+        animation: slideInRight 0.5s ease-out;
+    }
+
+    .sub-menu-header {
+        text-align: center;
+        color: white;
+        margin-bottom: 40px;
+    }
+
+    .sub-menu-header h2 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .back-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.3);
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-2px);
+    }
+
+    .game-modes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .mode-card {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 30px 25px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .mode-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+
+    .mode-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .mode-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .mode-description {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 15px;
+    }
+
+    .difficulty-badge {
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .easy { background: #d4edda; color: #155724; }
+    .medium { background: #fff3cd; color: #856404; }
+    .hard { background: #f8d7da; color: #721c24; }
+
+    /* 게임 플레이 화면 */
+    .game-container {
+        width: 100%;
+        max-width: 900px;
+    }
+
+    .quiz-container {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 30px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .quiz-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .score {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #667eea;
+        background: rgba(102,126,234,0.1);
+        padding: 10px 20px;
+        border-radius: 20px;
+    }
+
+    .question-number {
+        font-size: 1.1rem;
+        color: #666;
+    }
+
+    .flag-display {
+        width: 320px;
+        height: 200px;
+        margin: 0 auto 30px;
+        border: 3px solid #333;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .flag-display img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .flag-display:hover img {
+        transform: scale(1.05);
+    }
+
+    .flag-emoji {
+        font-size: 80px;
+        animation: bounceIn 0.5s ease-out;
+    }
+
+    .question-text {
+        font-size: 1.6rem;
+        margin-bottom: 30px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .country-name, .capital-name {
+        font-size: 1.4rem;
+        color: #667eea;
+        margin-bottom: 25px;
+        font-weight: bold;
+        background: rgba(102,126,234,0.1);
+        padding: 15px 25px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    .options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .option-btn {
+        background: linear-gradient(135deg, #f8f9ff, #e8f0ff);
+        border: 2px solid #e0e6ff;
+        padding: 18px 20px;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .option-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .option-btn:hover::before {
+        left: 100%;
+    }
+
+    .option-btn:hover {
+        background: linear-gradient(135deg, #e8f0ff, #d4e7ff);
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+    }
+
+    .option-btn.correct {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        border-color: #28a745;
+        color: #155724;
+        animation: correctPulse 0.6s ease-out;
+    }
+
+    .option-btn.incorrect {
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        border-color: #dc3545;
+        color: #721c24;
+        animation: incorrectShake 0.6s ease-out;
+    }
+
+    .option-btn.disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* 결과 및 버튼들 */
+    .result {
+        margin: 25px 0;
+        padding: 20px;
+        border-radius: 15px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        animation: slideInUp 0.5s ease-out;
+    }
+
+    .result.correct {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        border: 2px solid #28a745;
+    }
+
+    .result.incorrect {
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        color: #721c24;
+        border: 2px solid #dc3545;
+    }
+
+    .next-btn, .restart-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+    }
+
+    .next-btn:hover, .restart-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(102,126,234,0.4);
+    }
+
+    .restart-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        box-shadow: 0 8px 20px rgba(40,167,69,0.3);
+    }
+
+    .restart-btn:hover {
+        box-shadow: 0 12px 30px rgba(40,167,69,0.4);
+    }
+
+    .final-score {
+        text-align: center;
+        padding: 50px 40px;
+        background: rgba(255,255,255,0.95);
+        border-radius: 25px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        animation: bounceIn 0.8s ease-out;
+    }
+
+    .final-score h2 {
+        color: #667eea;
+        margin-bottom: 25px;
+        font-size: 3rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .final-score p {
+        font-size: 1.6rem;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    /* 애니메이션 */
+    @keyframes fadeInDown {
+        from { 
+            opacity: 0; 
+            transform: translateY(-50px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from { 
+            opacity: 0; 
+            transform: translateY(50px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from { 
+            opacity: 0; 
+            transform: translateX(30px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes bounceIn {
+        0% { 
+            transform: scale(0.3); 
+            opacity: 0; 
+        }
+        50% { 
+            transform: scale(1.05); 
+        }
+        70% { 
+            transform: scale(0.9); 
+        }
+        100% { 
+            transform: scale(1); 
+            opacity: 1; 
+        }
+    }
+
+    @keyframes slideInUp {
+        from { 
+            opacity: 0; 
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes correctPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes incorrectShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    @keyframes textPulse {
+        0%, 100% { 
+            transform: scale(1); 
+            filter: brightness(1);
+        }
+        50% { 
+            transform: scale(1.02); 
+            filter: brightness(1.1);
+        }
+    }
+
+    @keyframes shimmer {
+        0%, 100% { 
+            opacity: 0.3; 
+            transform: translateX(-50%) scaleX(1);
+        }
+        50% { 
+            opacity: 1; 
+            transform: translateX(-50%) scaleX(1.5);
+        }
+    }
+
+    @keyframes expandLine {
+        from { 
+            width: 0; 
+            opacity: 0;
+        }
+        to { 
+            width: 80px; 
+            opacity: 1;
+        }
+    }
+
+    @keyframes subtitleFade {
+        from { 
+            opacity: 0; 
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 0.95; 
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes statsSlide {
+        from { 
+            opacity: 0; 
+            transform: translateY(30px) scale(0.9);
+        }
+        to { 
+            opacity: 0.9; 
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes statsShimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { 
+            transform: translateY(0px) rotate(0deg);
+        }
+        33% { 
+            transform: translateY(-5px) rotate(1deg);
+        }
+        66% { 
+            transform: translateY(3px) rotate(-1deg);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% { 
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.1;
+        }
+        50% { 
+            transform: translateY(-20px) rotate(5deg);
+            opacity: 0.2;
+        }
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            padding: 15px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            color: white;
-        }
-
-        .header h1 {
+        .main-header h1 {
             font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -1px;
         }
 
-        .header p {
+        .subtitle {
+            font-size: 1.4rem;
+        }
+
+        .stats-info {
+            font-size: 0.95rem;
+            padding: 12px 24px;
+        }
+
+        .category-card {
+            padding: 35px 25px;
+            margin: 0 10px;
+        }
+
+        .category-icon {
+            font-size: 4rem;
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+        }
+
+        .category-description {
+            font-size: 1rem;
+        }
+
+        .flag-display {
+            width: 280px;
+            height: 175px;
+        }
+
+        .options {
+            grid-template-columns: 1fr;
+        }
+
+        .quiz-container {
+            padding: 25px 20px;
+        }
+
+        .main-menu {
+            grid-template-columns: 1fr;
+            gap: 30px;
+            max-width: 400px;
+        }
+
+        .game-modes {
+            grid-template-columns: 1fr;
+        }
+
+        .floating-flag {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
             font-size: 1.2rem;
-            opacity: 0.9;
         }
 
-        .search-box {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .search-input {
-            padding: 12px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 25px;
-            width: 300px;
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .search-input:focus {
-            outline: none;
-            background: white;
-            transform: scale(1.05);
-            transition: all 0.3s ease;
-        }
-
-        .flags-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-            padding: 20px 0;
-        }
-
-        .flag-card {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 2px solid transparent;
-            overflow: hidden;
-        }
-
-        .flag-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            border-color: #667eea;
-        }
-
-        .flag-image {
-            width: 180px;
-            height: 120px;
-            margin: 0 auto 15px;
-            border: 2px solid #333;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .flag-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .flag-card:hover .flag-image img {
-            transform: scale(1.1);
-        }
-
-        .flag-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .flag-code {
-            font-size: 0.9rem;
-            color: #666;
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 12px;
-            display: inline-block;
-        }
-
-        .loading {
-            color: #999;
-            font-size: 14px;
-        }
-
-        .stats {
-            text-align: center;
-            margin-top: 40px;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 768px) {
-            .flags-grid {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                gap: 15px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .search-input {
-                width: 250px;
-            }
-
-            .flag-image {
-                width: 150px;
-                height: 100px;
-            }
-        }
-
-        .continent-filter {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .continent-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid rgba(255,255,255,0.3);
-            padding: 8px 16px;
-            margin: 0 5px;
+        .category-card {
+            padding: 30px 20px;
             border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
         }
 
-        .continent-btn:hover,
-        .continent-btn.active {
-            background: rgba(255,255,255,0.9);
-            color: #333;
-            border-color: white;
+        .category-icon {
+            font-size: 3.5rem;
         }
-    </style>
+
+        .category-title {
+            font-size: 1.6rem;
+        }
+
+        .stats-info {
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            border-radius: 30px;
+        }
+
+        .main-menu {
+            gap: 25px;
+        }
+    }
+</style>
+```
+
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🌍 전 세계 국기 이미지</h1>
-            <p>실제 국기 이미지로 구현된 세계 각국의 국기들</p>
-        </div>
-
-        <div class="search-box">
-            <input type="text" class="search-input" placeholder="국가명 검색..." id="searchInput">
-        </div>
-
-        <div class="continent-filter">
-            <button class="continent-btn active" data-continent="all">전체</button>
-            <button class="continent-btn" data-continent="asia">아시아</button>
-            <button class="continent-btn" data-continent="europe">유럽</button>
-            <button class="continent-btn" data-continent="america">아메리카</button>
-            <button class="continent-btn" data-continent="africa">아프리카</button>
-            <button class="continent-btn" data-continent="oceania">오세아니아</button>
-        </div>
-
-        <div class="flags-grid" id="flagsGrid">
-            <!-- 아시아 -->
-            <div class="flag-card" data-name="한국" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/kr.webp" alt="한국 국기" loading="lazy" 
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇰🇷</div>
-                </div>
-                <div class="flag-name">대한민국</div>
-                <div class="flag-code">KR</div>
+        <!-- 메인 메뉴 화면 -->
+        <div id="mainScreen">
+            <div class="floating-elements">
+                <div class="floating-flag">🇰🇷</div>
+                <div class="floating-flag">🇺🇸</div>
+                <div class="floating-flag">🇯🇵</div>
+                <div class="floating-flag">🇫🇷</div>
+                <div class="floating-flag">🇬🇧</div>
             </div>
 
-            <div class="flag-card" data-name="일본" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/jp.webp" alt="일본 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇯🇵</div>
-                </div>
-                <div class="flag-name">일본</div>
-                <div class="flag-code">JP</div>
-            </div>
-
-            <div class="flag-card" data-name="중국" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/cn.webp" alt="중국 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇨🇳</div>
-                </div>
-                <div class="flag-name">중국</div>
-                <div class="flag-code">CN</div>
-            </div>
-
-            <div class="flag-card" data-name="인도" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/in.webp" alt="인도 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇮🇳</div>
-                </div>
-                <div class="flag-name">인도</div>
-                <div class="flag-code">IN</div>
-            </div>
-
-            <div class="flag-card" data-name="태국" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/th.webp" alt="태국 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇹🇭</div>
-                </div>
-                <div class="flag-name">태국</div>
-                <div class="flag-code">TH</div>
-            </div>
-
-            <div class="flag-card" data-name="베트남" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/vn.webp" alt="베트남 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇻🇳</div>
-                </div>
-                <div class="flag-name">베트남</div>
-                <div class="flag-code">VN</div>
-            </div>
-
-            <div class="flag-card" data-name="싱가포르" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/sg.webp" alt="싱가포르 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇸🇬</div>
-                </div>
-                <div class="flag-name">싱가포르</div>
-                <div class="flag-code">SG</div>
-            </div>
-
-            <div class="flag-card" data-name="말레이시아" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/my.webp" alt="말레이시아 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇲🇾</div>
-                </div>
-                <div class="flag-name">말레이시아</div>
-                <div class="flag-code">MY</div>
-            </div>
-
-            <div class="flag-card" data-name="인도네시아" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/id.webp" alt="인도네시아 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇮🇩</div>
-                </div>
-                <div class="flag-name">인도네시아</div>
-                <div class="flag-code">ID</div>
-            </div>
-
-            <div class="flag-card" data-name="필리핀" data-continent="asia">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/ph.webp" alt="필리핀 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇵🇭</div>
-                </div>
-                <div class="flag-name">필리핀</div>
-                <div class="flag-code">PH</div>
-            </div>
-
-            <!-- 유럽 -->
-            <div class="flag-card" data-name="독일" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/de.webp" alt="독일 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇩🇪</div>
-                </div>
-                <div class="flag-name">독일</div>
-                <div class="flag-code">DE</div>
-            </div>
-
-            <div class="flag-card" data-name="프랑스" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/fr.webp" alt="프랑스 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇫🇷</div>
-                </div>
-                <div class="flag-name">프랑스</div>
-                <div class="flag-code">FR</div>
-            </div>
-
-            <div class="flag-card" data-name="영국" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/gb.webp" alt="영국 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇬🇧</div>
-                </div>
-                <div class="flag-name">영국</div>
-                <div class="flag-code">GB</div>
-            </div>
-
-            <div class="flag-card" data-name="이탈리아" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/it.webp" alt="이탈리아 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇮🇹</div>
-                </div>
-                <div class="flag-name">이탈리아</div>
-                <div class="flag-code">IT</div>
-            </div>
-
-            <div class="flag-card" data-name="스페인" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/es.webp" alt="스페인 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇪🇸</div>
-                </div>
-                <div class="flag-name">스페인</div>
-                <div class="flag-code">ES</div>
-            </div>
-
-            <div class="flag-card" data-name="러시아" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/ru.webp" alt="러시아 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇷🇺</div>
-                </div>
-                <div class="flag-name">러시아</div>
-                <div class="flag-code">RU</div>
-            </div>
-
-            <div class="flag-card" data-name="스위스" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/ch.webp" alt="스위스 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇨🇭</div>
-                </div>
-                <div class="flag-name">스위스</div>
-                <div class="flag-code">CH</div>
-            </div>
-
-            <div class="flag-card" data-name="네덜란드" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/nl.webp" alt="네덜란드 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇳🇱</div>
-                </div>
-                <div class="flag-name">네덜란드</div>
-                <div class="flag-code">NL</div>
-            </div>
-
-            <div class="flag-card" data-name="벨기에" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/be.webp" alt="벨기에 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇧🇪</div>
-                </div>
-                <div class="flag-name">벨기에</div>
-                <div class="flag-code">BE</div>
-            </div>
-
-            <div class="flag-card" data-name="스웨덴" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/se.webp" alt="스웨덴 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇸🇪</div>
-                </div>
-                <div class="flag-name">스웨덴</div>
-                <div class="flag-code">SE</div>
-            </div>
-
-            <div class="flag-card" data-name="노르웨이" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/no.webp" alt="노르웨이 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇳🇴</div>
-                </div>
-                <div class="flag-name">노르웨이</div>
-                <div class="flag-code">NO</div>
-            </div>
-
-            <div class="flag-card" data-name="덴마크" data-continent="europe">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/dk.webp" alt="덴마크 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇩🇰</div>
-                </div>
-                <div class="flag-name">덴마크</div>
-                <div class="flag-code">DK</div>
-            </div>
-
-            <!-- 아메리카 -->
-            <div class="flag-card" data-name="미국" data-continent="america">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/us.webp" alt="미국 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇺🇸</div>
-                </div>
-                <div class="flag-name">미국</div>
-                <div class="flag-code">US</div>
-            </div>
-
-            <div class="flag-card" data-name="캐나다" data-continent="america">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/ca.webp" alt="캐나다 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇨🇦</div>
-                </div>
-                <div class="flag-name">캐나다</div>
-                <div class="flag-code">CA</div>
-            </div>
-
-            <div class="flag-card" data-name="브라질" data-continent="america">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/br.webp" alt="브라질 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇧🇷</div>
-                </div>
-                <div class="flag-name">브라질</div>
-                <div class="flag-code">BR</div>
-            </div>
-
-            <div class="flag-card" data-name="아르헨티나" data-continent="america">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/ar.webp" alt="아르헨티나 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇦🇷</div>
-                </div>
-                <div class="flag-name">아르헨티나</div>
-                <div class="flag-code">AR</div>
-            </div>
-
-            <div class="flag-card" data-name="멕시코" data-continent="america">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/mx.webp" alt="멕시코 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇲🇽</div>
-                </div>
-                <div class="flag-name">멕시코</div>
-                <div class="flag-code">MX</div>
-            </div>
-
-            <div class="flag-card" data-name="칠레" data-continent="america">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/cl.webp" alt="칠레 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇨🇱</div>
-                </div>
-                <div class="flag-name">칠레</div>
-                <div class="flag-code">CL</div>
-            </div>
-
-            <!-- 아프리카 -->
-            <div class="flag-card" data-name="남아프리카공화국" data-continent="africa">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/za.webp" alt="남아프리카공화국 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇿🇦</div>
-                </div>
-                <div class="flag-name">남아프리카공화국</div>
-                <div class="flag-code">ZA</div>
-            </div>
-
-            <div class="flag-card" data-name="이집트" data-continent="africa">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/eg.webp" alt="이집트 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇪🇬</div>
-                </div>
-                <div class="flag-name">이집트</div>
-                <div class="flag-code">EG</div>
-            </div>
-
-            <div class="flag-card" data-name="나이지리아" data-continent="africa">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/ng.webp" alt="나이지리아 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇳🇬</div>
-                </div>
-                <div class="flag-name">나이지리아</div>
-                <div class="flag-code">NG</div>
-            </div>
-
-            <div class="flag-card" data-name="케냐" data-continent="africa">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/ke.webp" alt="케냐 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇰🇪</div>
-                </div>
-                <div class="flag-name">케냐</div>
-                <div class="flag-code">KE</div>
-            </div>
-
-            <!-- 오세아니아 -->
-            <div class="flag-card" data-name="호주" data-continent="oceania">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/au.webp" alt="호주 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇦🇺</div>
-                </div>
-                <div class="flag-name">호주</div>
-                <div class="flag-code">AU</div>
-            </div>
-
-            <div class="flag-card" data-name="뉴질랜드" data-continent="oceania">
-                <div class="flag-image">
-                    <img src="https://flagpedia.net/data/flags/w580/nz.webp" alt="뉴질랜드 국기" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <div style="display:none; font-size:60px; line-height:120px;">🇳🇿</div>
-                </div>
-                <div class="flag-name">뉴질랜드</div>
-                <div class="flag-code">NZ</div>
+```
+        <div class="main-header">
+            <h1>🌍 Flag Master</h1>
+            <div class="subtitle">전 세계 국기와 수도를 마스터하세요!</div>
+            <div class="stats-info">
+                ✨ 195개국 완전 지원 • 🎯 5가지 게임 모드 • 🏆 실력 테스트
             </div>
         </div>
 
-        <div class="stats">
-            <p id="visibleCount">표시된 국기: 32개</p>
-            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">
-                실제 국기 이미지로 구현 (flagcdn.com 제공)
-            </p>
+        <div class="main-menu">
+            <div class="category-card" onclick="showCountryMenu()">
+                <div class="category-icon">🏳️</div>
+                <div class="category-title">국가 맞추기</div>
+                <div class="category-description">
+                    국기를 보고 나라를 맞추거나<br>
+                    나라 이름을 보고 국기를 찾아보세요
+                </div>
+                <div class="mode-count">2가지 모드</div>
+            </div>
+
+            <div class="category-card" onclick="showCapitalMenu()">
+                <div class="category-icon">🏙️</div>
+                <div class="category-title">수도 맞추기</div>
+                <div class="category-description">
+                    다양한 난이도로<br>
+                    세계 각국의 수도를 정복하세요
+                </div>
+                <div class="mode-count">3가지 모드</div>
+            </div>
         </div>
     </div>
 
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const flagsGrid = document.getElementById('flagsGrid');
-        const visibleCount = document.getElementById('visibleCount');
-        const flagCards = document.querySelectorAll('.flag-card');
-        const continentBtns = document.querySelectorAll('.continent-btn');
+    <!-- 국가 맞추기 서브 메뉴 -->
+    <div id="countryMenu" class="sub-menu hidden">
+        <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+        <div class="sub-menu-header">
+            <h2>🏳️ 국가 맞추기</h2>
+            <p>국기와 국가명으로 실력을 테스트해보세요!</p>
+        </div>
 
-        // 검색 기능
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            filterFlags();
-        });
+        <div class="game-modes">
+            <div class="mode-card" onclick="startGame('flag-to-country')">
+                <div class="mode-icon">🏳️➡️🌍</div>
+                <div class="mode-title">국기 → 나라명</div>
+                <div class="mode-description">국기를 보고 나라 이름을 맞춰보세요</div>
+                <div class="difficulty-badge easy">쉬움</div>
+            </div>
 
-        // 대륙 필터
-        continentBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                continentBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                filterFlags();
-            });
-        });
+            <div class="mode-card" onclick="startGame('country-to-flag')">
+                <div class="mode-icon">🌍➡️🏳️</div>
+                <div class="mode-title">나라명 → 국기</div>
+                <div class="mode-description">나라 이름을 보고 국기를 맞춰보세요</div>
+                <div class="difficulty-badge medium">보통</div>
+            </div>
+        </div>
+    </div>
 
-        function filterFlags() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const selectedContinent = document.querySelector('.continent-btn.active').dataset.continent;
-            let visibleFlags = 0;
+    <!-- 수도 맞추기 서브 메뉴 -->
+    <div id="capitalMenu" class="sub-menu hidden">
+        <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+        <div class="sub-menu-header">
+            <h2>🏙️ 수도 맞추기</h2>
+            <p>난이도를 선택하여 세계 수도를 마스터하세요!</p>
+        </div>
 
-            flagCards.forEach(card => {
-                const flagName = card.getAttribute('data-name').toLowerCase();
-                const flagCode = card.querySelector('.flag-code').textContent.toLowerCase();
-                const cardContinent = card.getAttribute('data-continent');
-                
-                const matchesSearch = flagName.includes(searchTerm) || flagCode.includes(searchTerm);
-                const matchesContinent = selectedContinent === 'all' || cardContinent === selectedContinent;
-                
-                if (matchesSearch && matchesContinent) {
-                    card.style.display = 'block';
-                    visibleFlags++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+        <div class="game-modes">
+            <div class="mode-card" onclick="startGame('capital-easy')">
+                <div class="mode-icon">🏳️🌍➡️🏙️</div>
+                <div class="mode-title">국기+나라 → 수도</div>
+                <div class="mode-description">국기와 나라명을 보고 수도를 맞춰보세요</div>
+                <div class="difficulty-badge easy">쉬움</div>
+            </div>
 
-            visibleCount.textContent = `표시된 국기: ${visibleFlags}개`;
-        }
+            <div class="mode-card" onclick="startGame('capital-hard')">
+                <div class="mode-icon">🏳️➡️🏙️</div>
+                <div class="mode-title">국기 → 수도</div>
+                <div class="mode-description">국기만 보고 수도를 맞춰보세요</div>
+                <div class="difficulty-badge hard">어려움</div>
+            </div>
 
-        // 국기 카드 클릭시 정보 표시
-        flagCards.forEach(card => {
-            card.addEventListener('click', function() {
-                const flagName = this.querySelector('.flag-name').textContent;
-                const flagCode = this.querySelector('.flag-code').textContent;
-                const continent = this.getAttribute('data-continent');
-                
-                alert(`${flagName} (${flagCode})\n소속: ${getContinentName(continent)}\n\n실제 국기 이미지로 표시됩니다.`);
-            });
-        });
+            <div class="mode-card" onclick="startGame('capital-to-flag')">
+                <div class="mode-icon">🏙️➡️🏳️</div>
+                <div class="mode-title">수도 → 국기</div>
+                <div class="mode-description">수도 이름을 보고 국기를 맞춰보세요</div>
+                <div class="difficulty-badge medium">보통</div>
+            </div>
+        </div>
+    </div>
 
-        function getContinentName(continent) {
-            const continentNames = {
-                'asia': '아시아',
-                'europe': '유럽',
-                'america': '아메리카',
-                'africa': '아프리카',
-                'oceania': '오세아니아'
-            };
-            return continentNames[continent] || '기타';
-        }
+    <!-- 게임 플레이 화면 -->
+    <div id="gameScreen" class="game-container hidden">
+        <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+        
+        <div class="quiz-container">
+            <div class="quiz-info">
+                <div class="score" id="score">점수: 0/0</div>
+                <div class="question-number" id="questionNumber">문제 1/10</div>
+            </div>
 
-        // 이미지 로딩 에러 처리
-        document.querySelectorAll('.flag-image img').forEach(img => {
-            img.addEventListener('error', function() {
-                this.style.display = 'none';
-                this.parentElement.innerHTML = '<div class="loading">이미지 로딩 실패</div>';
-            });
-        });
-    </script>
+            <div class="flag-display" id="flagDisplay">
+                <div class="loading">문제를 준비중...</div>
+            </div>
+
+            <div class="country-name hidden" id="countryName"></div>
+            <div class="capital-name hidden" id="capitalName"></div>
+            <div class="capital-name hidden" id="capitalName"></div>
+
+            <div class="question-text" id="questionText">문제를 준비중입니다...</div>
+
+            <div class="options" id="options">
+                <!-- 옵션들이 여기에 동적으로 생성됩니다 -->
+            </div>
+
+            <div class="result hidden" id="result"></div>
+
+            <button class="next-btn hidden" id="nextBtn">다음 문제</button>
+        </div>
+
+        <div id="finalScore" class="final-score hidden">
+            <h2>🎉 게임 완료!</h2>
+            <p id="finalScoreText">10문제 중 0문제 정답!</p>
+            <div id="scoreMessage"></div>
+            <button class="restart-btn" id="restartBtn">다시 시작</button>
+            <button class="back-btn" onclick="showMainMenu()" style="margin-left: 15px;">메인으로</button>
+        </div>
+    </div>
+</div>
+
+<!-- 외부 JS 파일들 로드 -->
+<script src="countries.js"></script>
+<script src="game.js"></script>
+```
+
 </body>
 </html>
