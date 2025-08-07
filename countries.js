@@ -1,56 +1,55 @@
 // 전 세계 195개국 국가 데이터
 const countries = [
 // 아시아 (48개국)
-{ code: ‘kr’, name: ‘한국’, capital: ‘서울’, continent: ‘asia’, flag: ‘🇰🇷’ },
-{ code: ‘kp’, name: ‘북한’, capital: ‘평양’, continent: ‘asia’, flag: ‘🇰🇵’ },
-{ code: ‘jp’, name: ‘일본’, capital: ‘도쿄’, continent: ‘asia’, flag: ‘🇯🇵’ },
-{ code: ‘cn’, name: ‘중국’, capital: ‘베이징’, continent: ‘asia’, flag: ‘🇨🇳’ },
-{ code: ‘in’, name: ‘인도’, capital: ‘뉴델리’, continent: ‘asia’, flag: ‘🇮🇳’ },
-{ code: ‘id’, name: ‘인도네시아’, capital: ‘자카르타’, continent: ‘asia’, flag: ‘🇮🇩’ },
-{ code: ‘th’, name: ‘태국’, capital: ‘방콕’, continent: ‘asia’, flag: ‘🇹🇭’ },
-{ code: ‘vn’, name: ‘베트남’, capital: ‘하노이’, continent: ‘asia’, flag: ‘🇻🇳’ },
-{ code: ‘ph’, name: ‘필리핀’, capital: ‘마닐라’, continent: ‘asia’, flag: ‘🇵🇭’ },
-{ code: ‘my’, name: ‘말레이시아’, capital: ‘쿠알라룸푸르’, continent: ‘asia’, flag: ‘🇲🇾’ },
-{ code: ‘sg’, name: ‘싱가포르’, capital: ‘싱가포르’, continent: ‘asia’, flag: ‘🇸🇬’ },
-{ code: ‘mm’, name: ‘미얀마’, capital: ‘네피도’, continent: ‘asia’, flag: ‘🇲🇲’ },
-{ code: ‘kh’, name: ‘캄보디아’, capital: ‘프놈펜’, continent: ‘asia’, flag: ‘🇰🇭’ },
-{ code: ‘la’, name: ‘라오스’, capital: ‘비엔티안’, continent: ‘asia’, flag: ‘🇱🇦’ },
-{ code: ‘bn’, name: ‘브루나이’, capital: ‘반다르세리베가완’, continent: ‘asia’, flag: ‘🇧🇳’ },
-{ code: ‘tl’, name: ‘동티모르’, capital: ‘딜리’, continent: ‘asia’, flag: ‘🇹🇱’ },
-{ code: ‘pk’, name: ‘파키스탄’, capital: ‘이슬라마바드’, continent: ‘asia’, flag: ‘🇵🇰’ },
-{ code: ‘bd’, name: ‘방글라데시’, capital: ‘다카’, continent: ‘asia’, flag: ‘🇧🇩’ },
-{ code: ‘lk’, name: ‘스리랑카’, capital: ‘콜롬보’, continent: ‘asia’, flag: ‘🇱🇰’ },
-{ code: ‘mv’, name: ‘몰디브’, capital: ‘말레’, continent: ‘asia’, flag: ‘🇲🇻’ },
-{ code: ‘af’, name: ‘아프가니스탄’, capital: ‘카불’, continent: ‘asia’, flag: ‘🇦🇫’ },
-{ code: ‘ir’, name: ‘이란’, capital: ‘테헤란’, continent: ‘asia’, flag: ‘🇮🇷’ },
-{ code: ‘iq’, name: ‘이라크’, capital: ‘바그다드’, continent: ‘asia’, flag: ‘🇮🇶’ },
-{ code: ‘tr’, name: ‘터키’, capital: ‘앙카라’, continent: ‘asia’, flag: ‘🇹🇷’ },
-{ code: ‘sa’, name: ‘사우디아라비아’, capital: ‘리야드’, continent: ‘asia’, flag: ‘🇸🇦’ },
-{ code: ‘ae’, name: ‘아랍에미리트’, capital: ‘아부다비’, continent: ‘asia’, flag: ‘🇦🇪’ },
-{ code: ‘qa’, name: ‘카타르’, capital: ‘도하’, continent: ‘asia’, flag: ‘🇶🇦’ },
-{ code: ‘kw’, name: ‘쿠웨이트’, capital: ‘쿠웨이트시티’, continent: ‘asia’, flag: ‘🇰🇼’ },
-{ code: ‘bh’, name: ‘바레인’, capital: ‘마나마’, continent: ‘asia’, flag: ‘🇧🇭’ },
-{ code: ‘om’, name: ‘오만’, capital: ‘무스카트’, continent: ‘asia’, flag: ‘🇴🇲’ },
-{ code: ‘ye’, name: ‘예멘’, capital: ‘사나’, continent: ‘asia’, flag: ‘🇾🇪’ },
-{ code: ‘jo’, name: ‘요단’, capital: ‘암만’, continent: ‘asia’, flag: ‘🇯🇴’ },
-{ code: ‘il’, name: ‘이스라엘’, capital: ‘예루살렘’, continent: ‘asia’, flag: ‘🇮🇱’ },
-{ code: ‘ps’, name: ‘팔레스타인’, capital: ‘라말라’, continent: ‘asia’, flag: ‘🇵🇸’ },
-{ code: ‘lb’, name: ‘레바논’, capital: ‘베이루트’, continent: ‘asia’, flag: ‘🇱🇧’ },
-{ code: ‘sy’, name: ‘시리아’, capital: ‘다마스쿠스’, continent: ‘asia’, flag: ‘🇸🇾’ },
-{ code: ‘cy’, name: ‘키프로스’, capital: ‘니코시아’, continent: ‘asia’, flag: ‘🇨🇾’ },
-{ code: ‘am’, name: ‘아르메니아’, capital: ‘예레반’, continent: ‘asia’, flag: ‘🇦🇲’ },
-{ code: ‘az’, name: ‘아제르바이잔’, capital: ‘바쿠’, continent: ‘asia’, flag: ‘🇦🇿’ },
-{ code: ‘ge’, name: ‘조지아’, capital: ‘트빌리시’, continent: ‘asia’, flag: ‘🇬🇪’ },
-{ code: ‘kz’, name: ‘카자흐스탄’, capital: ‘누르술탄’, continent: ‘asia’, flag: ‘🇰🇿’ },
-{ code: ‘kg’, name: ‘키르기스스탄’, capital: ‘비슈케크’, continent: ‘asia’, flag: ‘🇰🇬’ },
-{ code: ‘tj’, name: ‘타지키스탄’, capital: ‘두샨베’, continent: ‘asia’, flag: ‘🇹🇯’ },
-{ code: ‘tm’, name: ‘투르크메니스탄’, capital: ‘아시가바트’, continent: ‘asia’, flag: ‘🇹🇲’ },
-{ code: ‘uz’, name: ‘우즈베키스탄’, capital: ‘타슈켄트’, continent: ‘asia’, flag: ‘🇺🇿’ },
-{ code: ‘mn’, name: ‘몽골’, capital: ‘울란바토르’, continent: ‘asia’, flag: ‘🇲🇳’ },
-{ code: ‘np’, name: ‘네팔’, capital: ‘카트만두’, continent: ‘asia’, flag: ‘🇳🇵’ },
-{ code: ‘bt’, name: ‘부탄’, capital: ‘팀푸’, continent: ‘asia’, flag: ‘🇧🇹’ },
+{ code: 'kr', name: '한국', capital: '서울', continent: 'asia', flag: '🇰🇷' },
+{ code: 'kp', name: '북한', capital: '평양', continent: 'asia', flag: '🇰🇵' },
+{ code: 'jp', name: '일본', capital: '도쿄', continent: 'asia', flag: '🇯🇵' },
+{ code: 'cn', name: '중국', capital: '베이징', continent: 'asia', flag: '🇨🇳' },
+{ code: 'in', name: '인도', capital: '뉴델리', continent: 'asia', flag: '🇮🇳' },
+{ code: 'id', name: '인도네시아', capital: '자카르타', continent: 'asia', flag: '🇮🇩' },
+{ code: 'th', name: '태국', capital: '방콕', continent: 'asia', flag: '🇹🇭' },
+{ code: 'vn', name: '베트남', capital: '하노이', continent: 'asia', flag: '🇻🇳' },
+{ code: 'ph', name: '필리핀', capital: '마닐라', continent: 'asia', flag: '🇵🇭' },
+{ code: 'my', name: '말레이시아', capital: '쿠알라룸푸르', continent: 'asia', flag: '🇲🇾' },
+{ code: 'sg', name: '싱가포르', capital: '싱가포르', continent: 'asia', flag: '🇸🇬' },
+{ code: 'mm', name: '미얀마', capital: '네피도', continent: 'asia', flag: '🇲🇲' },
+{ code: 'kh', name: '캄보디아', capital: '프놈펜', continent: 'asia', flag: '🇰🇭' },
+{ code: 'la', name: '라오스', capital: '비엔티안', continent: 'asia', flag: '🇱🇦' },
+{ code: 'bn', name: '브루나이', capital: '반다르세리베가완', continent: 'asia', flag: '🇧🇳' },
+{ code: 'tl', name: '동티모르', capital: '딜리', continent: 'asia', flag: '🇹🇱' },
+{ code: 'pk', name: '파키스탄', capital: '이슬라마바드', continent: 'asia', flag: '🇵🇰' },
+{ code: 'bd', name: '방글라데시', capital: '다카', continent: 'asia', flag: '🇧🇩' },
+{ code: 'lk', name: '스리랑카', capital: '콜롬보', continent: 'asia', flag: '🇱🇰' },
+{ code: 'mv', name: '몰디브', capital: '말레', continent: 'asia', flag: '🇲🇻' },
+{ code: 'af', name: '아프가니스탄', capital: '카불', continent: 'asia', flag: '🇦🇫' },
+{ code: 'ir', name: '이란', capital: '테헤란', continent: 'asia', flag: '🇮🇷' },
+{ code: 'iq', name: '이라크', capital: '바그다드', continent: 'asia', flag: '🇮🇶' },
+{ code: 'tr', name: '터키', capital: '앙카라', continent: 'asia', flag: '🇹🇷' },
+{ code: 'sa', name: '사우디아라비아', capital: '리야드', continent: 'asia', flag: '🇸🇦' },
+{ code: 'ae', name: '아랍에미리트', capital: '아부다비', continent: 'asia', flag: '🇦🇪' },
+{ code: 'qa', name: '카타르', capital: '도하', continent: 'asia', flag: '🇶🇦' },
+{ code: 'kw', name: '쿠웨이트', capital: '쿠웨이트시티', continent: 'asia', flag: '🇰🇼' },
+{ code: 'bh', name: '바레인', capital: '마나마', continent: 'asia', flag: '🇧🇭' },
+{ code: 'om', name: '오만', capital: '무스카트', continent: 'asia', flag: '🇴🇲' },
+{ code: 'ye', name: '예멘', capital: '사나', continent: 'asia', flag: '🇾🇪' },
+{ code: 'jo', name: '요단', capital: '암만', continent: 'asia', flag: '🇯🇴' },
+{ code: 'il', name: '이스라엘', capital: '예루살렘', continent: 'asia', flag: '🇮🇱' },
+{ code: 'ps', name: '팔레스타인', capital: '라말라', continent: 'asia', flag: '🇵🇸' },
+{ code: 'lb', name: '레바논', capital: '베이루트', continent: 'asia', flag: '🇱🇧' },
+{ code: 'sy', name: '시리아', capital: '다마스쿠스', continent: 'asia', flag: '🇸🇾' },
+{ code: 'cy', name: '키프로스', capital: '니코시아', continent: 'asia', flag: '🇨🇾' },
+{ code: 'am', name: '아르메니아', capital: '예레반', continent: 'asia', flag: '🇦🇲' },
+{ code: 'az', name: '아제르바이잔', capital: '바쿠', continent: 'asia', flag: '🇦🇿' },
+{ code: 'ge', name: '조지아', capital: '트빌리시', continent: 'asia', flag: '🇬🇪' },
+{ code: 'kz', name: '카자흐스탄', capital: '누르술탄', continent: 'asia', flag: '🇰🇿' },
+{ code: 'kg', name: '키르기스스탄', capital: '비슈케크', continent: 'asia', flag: '🇰🇬' },
+{ code: 'tj', name: '타지키스탄', capital: '두샨베', continent: 'asia', flag: '🇹🇯' },
+{ code: 'tm', name: '투르크메니스탄', capital: '아시가바트', continent: 'asia', flag: '🇹🇲' },
+{ code: 'uz', name: '우즈베키스탄', capital: '타슈켄트', continent: 'asia', flag: '🇺🇿' },
+{ code: 'mn', name: '몽골', capital: '울란바토르', continent: 'asia', flag: '🇲🇳' },
+{ code: 'np', name: '네팔', capital: '카트만두', continent: 'asia', flag: '🇳🇵' },
+{ code: 'bt', name: '부탄', capital: '팀푸', continent: 'asia', flag: '🇧🇹' },
 
-```
 // 유럽 (44개국)
 { code: 'ru', name: '러시아', capital: '모스크바', continent: 'europe', flag: '🇷🇺' },
 { code: 'de', name: '독일', capital: '베를린', continent: 'europe', flag: '🇩🇪' },
@@ -143,7 +142,6 @@ const countries = [
 { code: 'mr', name: '모리타니', capital: '누악쇼트', continent: 'africa', flag: '🇲🇷' },
 { code: 'gm', name: '감비아', capital: '반줄', continent: 'africa', flag: '🇬🇲' },
 { code: 'gw', name: '기니비사우', capital: '비사우', continent: 'africa', flag: '🇬🇼' },
-{ code: 'sl', name: '시에라리온', capital: '프리타운', continent: 'africa', flag: '🇸🇱' },
 { code: 'ls', name: '레소토', capital: '마세루', continent: 'africa', flag: '🇱🇸' },
 { code: 'bw', name: '보츠와나', capital: '가보로네', continent: 'africa', flag: '🇧🇼' },
 { code: 'na', name: '나미비아', capital: '빈트후크', continent: 'africa', flag: '🇳🇦' },
@@ -207,75 +205,70 @@ const countries = [
 { code: 'mh', name: '마셜제도', capital: '마주로', continent: 'oceania', flag: '🇲🇭' },
 { code: 'pw', name: '팔라우', capital: '음굴루드', continent: 'oceania', flag: '🇵🇼' },
 { code: 'nr', name: '나우루', capital: '야렌', continent: 'oceania', flag: '🇳🇷' }
-```
-
 ];
 
 // 국가 데이터 유틸리티 함수들
 const CountryUtils = {
-// 전체 국가 목록 반환
-getAllCountries() {
-return countries;
-},
+    // 전체 국가 목록 반환
+    getAllCountries() {
+        return countries;
+    },
 
-```
-// 대륙별 국가 반환
-getCountriesByContinent(continent) {
-    return countries.filter(country => country.continent === continent);
-},
+    // 대륙별 국가 반환
+    getCountriesByContinent(continent) {
+        return countries.filter(country => country.continent === continent);
+    },
 
-// 랜덤 국가 선택
-getRandomCountry() {
-    return countries[Math.floor(Math.random() * countries.length)];
-},
+    // 랜덤 국가 선택
+    getRandomCountry() {
+        return countries[Math.floor(Math.random() * countries.length)];
+    },
 
-// 특정 국가 제외하고 랜덤 국가들 선택
-getRandomCountries(count, excludeCountry = null) {
-    let availableCountries = countries;
-    if (excludeCountry) {
-        availableCountries = countries.filter(country => 
-            country.code !== excludeCountry.code && 
-            country.name !== excludeCountry.name
-        );
+    // 특정 국가 제외하고 랜덤 국가들 선택
+    getRandomCountries(count, excludeCountry = null) {
+        let availableCountries = countries;
+        if (excludeCountry) {
+            availableCountries = countries.filter(country => 
+                country.code !== excludeCountry.code && 
+                country.name !== excludeCountry.name
+            );
+        }
+        
+        const shuffled = [...availableCountries].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    },
+
+    // 국가 코드로 국가 찾기
+    getCountryByCode(code) {
+        return countries.find(country => country.code === code);
+    },
+
+    // 국가명으로 국가 찾기
+    getCountryByName(name) {
+        return countries.find(country => country.name === name);
+    },
+
+    // 수도명으로 국가 찾기
+    getCountryByCapital(capital) {
+        return countries.find(country => country.capital === capital);
+    },
+
+    // 국기 이미지 URL 생성
+    getFlagImageUrl(countryCode) {
+        return `https://flagpedia.net/data/flags/w580/${countryCode}.webp`;
+    },
+
+    // 국가 총 개수
+    getTotalCount() {
+        return countries.length;
+    },
+
+    // 대륙별 통계
+    getContinentStats() {
+        const stats = {};
+        countries.forEach(country => {
+            stats[country.continent] = (stats[country.continent] || 0) + 1;
+        });
+        return stats;
     }
-    
-    const shuffled = [...availableCountries].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
-},
-
-// 국가 코드로 국가 찾기
-getCountryByCode(code) {
-    return countries.find(country => country.code === code);
-},
-
-// 국가명으로 국가 찾기
-getCountryByName(name) {
-    return countries.find(country => country.name === name);
-},
-
-// 수도명으로 국가 찾기
-getCountryByCapital(capital) {
-    return countries.find(country => country.capital === capital);
-},
-
-// 국기 이미지 URL 생성
-getFlagImageUrl(countryCode) {
-    return `https://flagpedia.net/data/flags/w580/${countryCode}.webp`;
-},
-
-// 국가 총 개수
-getTotalCount() {
-    return countries.length;
-},
-
-// 대륙별 통계
-getContinentStats() {
-    const stats = {};
-    countries.forEach(country => {
-        stats[country.continent] = (stats[country.continent] || 0) + 1;
-    });
-    return stats;
-}
-```
-
 };
