@@ -1,959 +1,986 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 Flag Master</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <title>🌍 Flag Master - 전 세계 국기 마스터</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Jua&display=swap');
-
-```
-    :root {
-        --glass-bg: rgba(255, 255, 255, 0.12);
-        --glass-border: rgba(255, 255, 255, 0.18);
-        --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        --accent-gradient: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-        --success-gradient: linear-gradient(135deg, #00b894, #00a085);
-        --danger-gradient: linear-gradient(135deg, #ff6b6b, #ff8787);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-        background: var(--primary-gradient);
-        min-height: 100vh;
-        overflow-x: hidden;
-        position: relative;
-        color: white;
-        line-height: 1.6;
-    }
-
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: 
-            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
-        pointer-events: none;
-        z-index: -1;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: clamp(1rem, 3vw, 2rem);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* 메인 헤더 */
-    .main-header {
-        text-align: center;
-        margin-bottom: clamp(3rem, 8vw, 5rem);
-        animation: fadeInDown 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-    }
-
-    .main-header::before {
-        content: '';
-        position: absolute;
-        top: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 150px;
-        height: 6px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-        border-radius: 3px;
-        animation: shimmer 3s ease-in-out infinite;
-    }
-
-    .main-header h1 {
-        font-size: clamp(3rem, 8vw, 5.5rem);
-        font-weight: 800;
-        margin-bottom: clamp(1rem, 3vw, 1.5rem);
-        background: linear-gradient(135deg, #ffffff 0%, #e8f4fd 25%, #ffffff 50%, #ffeaa7 75%, #ffffff 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        background-size: 400% 400%;
-        animation: gradientShift 4s ease-in-out infinite, textPulse 2s ease-in-out infinite;
-        text-shadow: 0 4px 20px rgba(255,255,255,0.3);
-        letter-spacing: -2px;
-        position: relative;
-        font-family: 'Jua', sans-serif;
-        line-height: 1.1;
-    }
-
-    .main-header h1::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 4px;
-        background: var(--accent-gradient);
-        border-radius: 2px;
-        animation: expandLine 1.5s ease-out 0.5s both;
-    }
-
-    .subtitle {
-        font-size: clamp(1.2rem, 4vw, 1.8rem);
-        font-weight: 600;
-        margin-bottom: clamp(1rem, 3vw, 1.5rem);
-        opacity: 0.95;
-        background: linear-gradient(45deg, #ffffff, #e8f4fd);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: subtitleFade 1.5s ease-out 0.8s both;
-    }
-
-    .stats-info {
-        font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-        font-weight: 500;
-        opacity: 0.9;
-        background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
-        border-radius: 50px;
-        border: 1px solid var(--glass-border);
-        display: inline-block;
-        box-shadow: var(--glass-shadow);
-        animation: statsSlide 1.8s ease-out 1.2s both;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .stats-info::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        animation: statsShimmer 3s ease-in-out infinite 2s;
-    }
-
-    .floating-elements {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        overflow: hidden;
-    }
-
-    .floating-flag {
-        position: absolute;
-        font-size: clamp(1.5rem, 3vw, 2rem);
-        opacity: 0.1;
-        animation: float 8s ease-in-out infinite;
-    }
-
-    .floating-flag:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-    .floating-flag:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
-    .floating-flag:nth-child(3) { top: 60%; left: 8%; animation-delay: 2s; }
-    .floating-flag:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 3s; }
-    .floating-flag:nth-child(5) { bottom: 40%; left: 20%; animation-delay: 4s; }
-
-    /* 메인 메뉴 */
-    .main-menu {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 40vw, 350px), 1fr));
-        gap: clamp(2rem, 5vw, 3rem);
-        width: 100%;
-        max-width: 900px;
-        animation: fadeInUp 1.2s ease-out 0.6s both;
-    }
-
-    .category-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border-radius: clamp(1.5rem, 4vw, 2rem);
-        border: 1px solid var(--glass-border);
-        padding: clamp(2.5rem, 6vw, 3.5rem) clamp(2rem, 5vw, 2.5rem);
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: var(--glass-shadow);
-        position: relative;
-        overflow: hidden;
-        transform: translateY(0);
-        touch-action: manipulation;
-    }
-
-    .category-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, 
-            rgba(102,126,234,0.05) 0%, 
-            rgba(118,75,162,0.05) 50%, 
-            rgba(240,147,251,0.05) 100%);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-
-    .category-card::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, 
-            transparent 30%, 
-            rgba(255,255,255,0.1) 50%, 
-            transparent 70%);
-        transform: rotate(45deg) translateX(-100%);
-        transition: transform 0.8s ease;
-    }
-
-    .category-card:hover::before {
-        opacity: 1;
-    }
-
-    .category-card:hover::after {
-        transform: rotate(45deg) translateX(100%);
-    }
-
-    .category-card:hover {
-        transform: translateY(-20px) scale(1.05);
-        box-shadow: 
-            0 40px 80px rgba(102,126,234,0.25),
-            0 20px 40px rgba(118,75,162,0.15),
-            inset 0 1px 0 rgba(255,255,255,0.9);
-        border-color: rgba(102,126,234,0.3);
-    }
-
-    .category-card:active {
-        transform: translateY(-15px) scale(1.02);
-    }
-
-    .category-icon {
-        font-size: clamp(3.5rem, 8vw, 5rem);
-        margin-bottom: clamp(1rem, 3vw, 1.5rem);
-        filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
-        animation: iconFloat 3s ease-in-out infinite;
-        position: relative;
-        z-index: 2;
-    }
-
-    .category-title {
-        font-size: clamp(1.5rem, 4vw, 2.2rem);
-        font-weight: 700;
-        color: white;
-        margin-bottom: clamp(1rem, 3vw, 1.5rem);
-        letter-spacing: -0.5px;
-        position: relative;
-        z-index: 2;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .category-description {
-        font-size: clamp(1rem, 3vw, 1.2rem);
-        color: rgba(255,255,255,0.85);
-        line-height: 1.6;
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        font-weight: 400;
-        position: relative;
-        z-index: 2;
-    }
-
-    .mode-count {
-        background: var(--accent-gradient);
-        color: #2d3436;
-        padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
-        border-radius: 25px;
-        font-size: clamp(0.9rem, 2.5vw, 1rem);
-        font-weight: 600;
-        display: inline-block;
-        box-shadow: 0 6px 20px rgba(253, 203, 110, 0.3);
-        position: relative;
-        z-index: 2;
-        transition: all 0.3s ease;
-    }
-
-    .category-card:hover .mode-count {
-        transform: scale(1.1);
-        box-shadow: 0 8px 30px rgba(253, 203, 110, 0.5);
-    }
-
-    /* 서브 메뉴 */
-    .sub-menu {
-        width: 100%;
-        max-width: 1000px;
-        animation: slideInRight 0.5s ease-out;
-    }
-
-    .sub-menu-header {
-        text-align: center;
-        color: white;
-        margin-bottom: clamp(2rem, 5vw, 3rem);
-    }
-
-    .sub-menu-header h2 {
-        font-size: clamp(2rem, 6vw, 2.8rem);
-        margin-bottom: clamp(0.5rem, 2vw, 1rem);
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        font-family: 'Jua', sans-serif;
-    }
-
-    .back-btn {
-        background: var(--danger-gradient);
-        color: white;
-        border: none;
-        border-radius: clamp(1rem, 3vw, 1.25rem);
-        padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
-        font-size: clamp(0.9rem, 2.5vw, 1rem);
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
-        font-family: 'Inter', sans-serif;
-        touch-action: manipulation;
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        position: relative;
-        z-index: 100;
-        min-height: 48px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-    }
-
-    .back-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-    }
-
-    .back-btn:active {
-        transform: translateY(0) scale(0.98);
-    }
-
-    .game-modes {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 40vw, 320px), 1fr));
-        gap: clamp(1.5rem, 4vw, 2rem);
-    }
-
-    .mode-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border-radius: clamp(1.25rem, 3vw, 1.5rem);
-        border: 1px solid var(--glass-border);
-        padding: clamp(2rem, 5vw, 2.5rem) clamp(1.5rem, 4vw, 2rem);
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: var(--glass-shadow);
-        position: relative;
-        overflow: hidden;
-        touch-action: manipulation;
-    }
-
-    .mode-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-        border-color: rgba(102,126,234,0.4);
-    }
-
-    .mode-card:active {
-        transform: translateY(-4px) scale(1);
-    }
-
-    .mode-icon {
-        font-size: clamp(2.5rem, 6vw, 3rem);
-        margin-bottom: clamp(1rem, 3vw, 1.5rem);
-    }
-
-    .mode-title {
-        font-size: clamp(1.2rem, 3vw, 1.4rem);
-        font-weight: 600;
-        color: white;
-        margin-bottom: clamp(0.75rem, 2vw, 1rem);
-        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    }
-
-    .mode-description {
-        font-size: clamp(0.9rem, 2.5vw, 1rem);
-        color: rgba(255,255,255,0.8);
-        margin-bottom: clamp(1rem, 3vw, 1.5rem);
-        line-height: 1.5;
-    }
-
-    .difficulty-badge {
-        padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
-        border-radius: 15px;
-        font-size: clamp(0.75rem, 2vw, 0.8rem);
-        font-weight: 600;
-        display: inline-block;
-    }
-
-    .easy { 
-        background: var(--success-gradient);
-        color: white;
-    }
-    .medium { 
-        background: var(--accent-gradient);
-        color: #2d3436;
-    }
-    .hard { 
-        background: var(--danger-gradient);
-        color: white;
-    }
-
-    /* 게임 플레이 화면 */
-    .game-container {
-        width: 100%;
-        max-width: 1000px;
-    }
-
-    .quiz-container {
-        background: var(--glass-bg);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border-radius: clamp(1.5rem, 4vw, 2rem);
-        border: 1px solid var(--glass-border);
-        padding: clamp(2rem, 5vw, 3rem);
-        box-shadow: var(--glass-shadow);
-        text-align: center;
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        animation: fadeIn 0.5s ease-out;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .quiz-container::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-        pointer-events: none;
-        animation: rotate 25s linear infinite;
-    }
-
-    .quiz-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: clamp(2rem, 5vw, 2.5rem);
-        flex-wrap: wrap;
-        gap: 1rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .score {
-        font-size: clamp(1.1rem, 3vw, 1.3rem);
-        font-weight: 600;
-        color: white;
-        background: var(--glass-bg);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.5rem);
-        border-radius: 20px;
-        border: 1px solid var(--glass-border);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .question-number {
-        font-size: clamp(1rem, 2.5vw, 1.1rem);
-        color: rgba(255,255,255,0.8);
-        font-weight: 500;
-    }
-
-    .flag-display {
-        width: clamp(280px, 50vw, 350px);
-        height: clamp(180px, 30vw, 220px);
-        margin: 0 auto clamp(1.5rem, 4vw, 2rem);
-        border: 3px solid rgba(255,255,255,0.3);
-        border-radius: clamp(1rem, 3vw, 1.5rem);
-        overflow: hidden;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-        background: rgba(248,249,250,0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-    }
-
-    .flag-display img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .flag-display:hover img {
-        transform: scale(1.05);
-    }
-
-    .flag-emoji {
-        font-size: clamp(4rem, 10vw, 5rem);
-        animation: bounceIn 0.5s ease-out;
-    }
-
-    .question-text {
-        font-size: clamp(1.3rem, 4vw, 1.6rem);
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        color: white;
-        font-weight: 600;
-        position: relative;
-        z-index: 1;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .country-name, .capital-name {
-        font-size: clamp(1.2rem, 3vw, 1.4rem);
-        color: white;
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        font-weight: 600;
-        background: var(--glass-bg);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
-        border-radius: 20px;
-        display: inline-block;
-        border: 1px solid var(--glass-border);
-        position: relative;
-        z-index: 1;
-    }
-
-    .options {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(clamp(200px, 40vw, 250px), 1fr));
-        gap: clamp(1rem, 3vw, 1.5rem);
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        position: relative;
-        z-index: 1;
-    }
-
-    .option-btn {
-        background: var(--glass-bg);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 2px solid var(--glass-border);
-        padding: clamp(1rem, 3vw, 1.25rem) clamp(1.25rem, 3vw, 1.5rem);
-        border-radius: clamp(0.75rem, 2vw, 1rem);
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        font-size: clamp(0.9rem, 2.5vw, 1rem);
-        font-weight: 500;
-        color: white;
-        position: relative;
-        overflow: hidden;
-        touch-action: manipulation;
-        min-height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .option-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s ease;
-    }
-
-    .option-btn:hover::before {
-        left: 100%;
-    }
-
-    .option-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(102,126,234,0.3);
-        border-color: rgba(102,126,234,0.5);
-    }
-
-    .option-btn:active {
-        transform: translateY(0);
-    }
-
-    .option-btn.correct {
-        background: var(--success-gradient);
-        border-color: rgba(0, 184, 148, 0.6);
-        animation: correctPulse 0.6s ease-out;
-    }
-
-    .option-btn.incorrect {
-        background: var(--danger-gradient);
-        border-color: rgba(255, 107, 107, 0.6);
-        animation: incorrectShake 0.6s ease-out;
-    }
-
-    .option-btn.disabled {
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
-
-    /* 결과 및 버튼들 */
-    .result {
-        margin: clamp(1.5rem, 4vw, 2rem) 0;
-        padding: clamp(1.25rem, 3vw, 1.5rem);
-        border-radius: clamp(1rem, 3vw, 1.25rem);
-        font-weight: 600;
-        font-size: clamp(1rem, 2.5vw, 1.1rem);
-        animation: slideInUp 0.5s ease-out;
-        position: relative;
-        z-index: 1;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid var(--glass-border);
-    }
-
-    .result.correct {
-        background: rgba(0, 184, 148, 0.15);
-        color: #00b894;
-        border-color: rgba(0, 184, 148, 0.3);
-    }
-
-    .result.incorrect {
-        background: rgba(255, 107, 107, 0.15);
-        color: #ff6b6b;
-        border-color: rgba(255, 107, 107, 0.3);
-    }
-
-    .next-btn, .restart-btn {
-        background: var(--accent-gradient);
-        color: #2d3436;
-        border: none;
-        padding: clamp(0.875rem, 2vw, 1.125rem) clamp(1.5rem, 4vw, 2.5rem);
-        border-radius: clamp(1rem, 3vw, 1.5rem);
-        font-size: clamp(1rem, 2.5vw, 1.2rem);
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        font-family: 'Inter', sans-serif;
-        margin-top: clamp(1rem, 3vw, 1.5rem);
-        box-shadow: 0 6px 20px rgba(253, 203, 110, 0.3);
-        position: relative;
-        z-index: 1;
-        touch-action: manipulation;
-    }
-
-    .next-btn:hover, .restart-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(253, 203, 110, 0.5);
-    }
-
-    .restart-btn {
-        background: var(--success-gradient);
-        color: white;
-        box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
-    }
-
-    .restart-btn:hover {
-        box-shadow: 0 8px 30px rgba(0, 184, 148, 0.5);
-    }
-
-    .final-score {
-        text-align: center;
-        padding: clamp(2.5rem, 6vw, 3.5rem) clamp(2rem, 5vw, 2.5rem);
-        background: var(--glass-bg);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border-radius: clamp(1.5rem, 4vw, 2rem);
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--glass-shadow);
-        animation: bounceIn 0.8s ease-out;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .final-score::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-        pointer-events: none;
-        animation: rotate 25s linear infinite;
-    }
-
-    .final-score h2 {
-        color: white;
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        font-size: clamp(2.5rem, 6vw, 3.5rem);
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        font-family: 'Jua', sans-serif;
-        position: relative;
-        z-index: 1;
-    }
-
-    .final-score p {
-        font-size: clamp(1.4rem, 4vw, 1.8rem);
-        margin-bottom: clamp(1.5rem, 4vw, 2rem);
-        color: rgba(255,255,255,0.9);
-        position: relative;
-        z-index: 1;
-    }
-
-    /* 애니메이션 */
-    @keyframes fadeInDown {
-        from { 
-            opacity: 0; 
-            transform: translateY(-50px);
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --success-gradient: linear-gradient(135deg, #00b894, #00a085);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b, #ff8787);
+            --accent-gradient: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            --text-primary: #1a202c;
         }
-        to { 
-            opacity: 1; 
-            transform: translateY(0);
-        }
-    }
 
-    @keyframes fadeInUp {
-        from { 
-            opacity: 0; 
-            transform: translateY(50px);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
-        to { 
-            opacity: 1; 
-            transform: translateY(0);
-        }
-    }
 
-    @keyframes slideInRight {
-        from { 
-            opacity: 0; 
-            transform: translateX(30px);
+        body {
+            font-family: 'Jua', 'Noto Sans KR', sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+            position: relative;
+            color: white;
+            line-height: 1.6;
         }
-        to { 
-            opacity: 1; 
-            transform: translateX(0);
-        }
-    }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
+        /* 배경 패턴 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="4"/></g></svg>') repeat;
+            pointer-events: none;
+            z-index: -1;
+        }
 
-    @keyframes bounceIn {
-        0% { 
-            transform: scale(0.3); 
-            opacity: 0; 
-        }
-        50% { 
-            transform: scale(1.05); 
-        }
-        70% { 
-            transform: scale(0.9); 
-        }
-        100% { 
-            transform: scale(1); 
-            opacity: 1; 
-        }
-    }
-
-    @keyframes slideInUp {
-        from { 
-            opacity: 0; 
-            transform: translateY(20px);
-        }
-        to { 
-            opacity: 1; 
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes correctPulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    @keyframes incorrectShake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-
-    @keyframes gradientShift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-    }
-
-    @keyframes textPulse {
-        0%, 100% { 
-            transform: scale(1); 
-            filter: brightness(1);
-        }
-        50% { 
-            transform: scale(1.02); 
-            filter: brightness(1.1);
-        }
-    }
-
-    @keyframes shimmer {
-        0%, 100% { 
-            opacity: 0.3; 
-            transform: translateX(-50%) scaleX(1);
-        }
-        50% { 
-            opacity: 1; 
-            transform: translateX(-50%) scaleX(1.5);
-        }
-    }
-
-    @keyframes expandLine {
-        from { 
-            width: 0; 
-            opacity: 0;
-        }
-        to { 
-            width: 80px; 
-            opacity: 1;
-        }
-    }
-
-    @keyframes subtitleFade {
-        from { 
-            opacity: 0; 
-            transform: translateY(20px);
-        }
-        to { 
-            opacity: 0.95; 
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes statsSlide {
-        from { 
-            opacity: 0; 
-            transform: translateY(30px) scale(0.9);
-        }
-        to { 
-            opacity: 0.9; 
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    @keyframes statsShimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-
-    @keyframes iconFloat {
-        0%, 100% { 
-            transform: translateY(0px) rotate(0deg);
-        }
-        33% { 
-            transform: translateY(-5px) rotate(1deg);
-        }
-        66% { 
-            transform: translateY(3px) rotate(-1deg);
-        }
-    }
-
-    @keyframes float {
-        0%, 100% { 
-            transform: translateY(0px) rotate(0deg);
-            opacity: 0.1;
-        }
-        50% { 
-            transform: translateY(-20px) rotate(5deg);
-            opacity: 0.2;
-        }
-    }
-
-    @keyframes rotate {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* 반응형 */
-    @media (max-width: 768px) {
         .container {
-            padding: clamp(0.75rem, 2vw, 1rem);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
         }
 
-        .main-menu {
-            grid-template-columns: 1fr;
-            gap: clamp(1.5rem, 4vw, 2rem);
-            max-width: 400px;
+        /* 날짜 헤더 */
+        .date-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 1.5rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            animation: slideInDown 0.8s ease-out;
         }
 
-        .game-modes {
-            grid-template-columns: 1fr;
+        .today-date {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        .floating-flag {
-            font-size: 1.5rem;
+        /* 메인 타이틀 */
+        .title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: bounceIn 1.2s ease-out;
         }
 
-        .options {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .main-header h1 {
-            font-size: clamp(2.5rem, 8vw, 3rem);
-            letter-spacing: -1px;
-        }
-
-        .category-card {
-            padding: clamp(2rem, 5vw, 2.5rem) clamp(1.5rem, 4vw, 2rem);
-            border-radius: clamp(1.25rem, 3vw, 1.5rem);
+        .main-title {
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #e3e3e3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            font-family: 'Jua', sans-serif;
+            line-height: 1.2;
         }
 
-        .category-icon {
-            font-size: clamp(3rem, 8vw, 3.5rem);
+        .subtitle {
+            font-size: clamp(0.9rem, 3vw, 1.5rem);
+            color: rgba(255,255,255,0.95);
+            font-weight: 400;
+            margin-bottom: 1rem;
         }
 
         .stats-info {
-            font-size: clamp(0.85rem, 2vw, 0.9rem);
-            padding: clamp(0.625rem, 1.5vw, 0.75rem) clamp(1.25rem, 3vw, 1.5rem);
-            border-radius: 30px;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
+            opacity: 0.9;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            display: inline-block;
+            box-shadow: var(--glass-shadow);
         }
-    }
 
-    .hidden {
-        display: none !important;
-    }
-</style>
-```
+        /* 햄버거 메뉴 버튼 */
+        .menu-toggle-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: 3rem;
+            height: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--glass-shadow);
+        }
 
+        .menu-toggle-btn span {
+            width: 1.5rem;
+            height: 0.1875rem;
+            background: white;
+            border-radius: 0.1875rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* 메뉴 오버레이 */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .menu-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 명예의 전당 버튼 */
+        .hall-btn-wrapper {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+        }
+
+        .hall-of-fame-btn {
+            background: var(--accent-gradient);
+            color: #2d3436;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(253, 203, 110, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hall-of-fame-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(253, 203, 110, 0.5);
+        }
+
+        /* 카테고리 그리드 */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .category-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 1.5rem;
+            border: 1px solid var(--glass-border);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .category-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .category-card:hover::before {
+            left: 100%;
+        }
+
+        .category-icon {
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
+        }
+
+        .category-title {
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .category-description {
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            color: rgba(255,255,255,0.85);
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .mode-count {
+            background: var(--accent-gradient);
+            color: #2d3436;
+            padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
+            border-radius: 25px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(253, 203, 110, 0.3);
+        }
+
+        /* 서브 메뉴 */
+        .sub-menu {
+            width: 100%;
+            max-width: 1000px;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .sub-menu-header {
+            text-align: center;
+            color: white;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+        }
+
+        .sub-menu-header h2 {
+            font-size: clamp(2rem, 6vw, 2.8rem);
+            margin-bottom: clamp(0.5rem, 2vw, 1rem);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Jua', sans-serif;
+        }
+
+        /* 뒤로가기 버튼 */
+        .back-btn {
+            background: var(--danger-gradient);
+            color: white;
+            border: none;
+            border-radius: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+            font-family: 'Noto Sans KR', sans-serif;
+            touch-action: manipulation;
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            min-height: 48px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 게임 모드 카드 */
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 40vw, 320px), 1fr));
+            gap: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        .mode-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: clamp(1.25rem, 3vw, 1.5rem);
+            border: 1px solid var(--glass-border);
+            padding: clamp(2rem, 5vw, 2.5rem) clamp(1.5rem, 4vw, 2rem);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .mode-icon {
+            font-size: clamp(2.5rem, 6vw, 3rem);
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        .mode-title {
+            font-size: clamp(1.2rem, 3vw, 1.4rem);
+            font-weight: 600;
+            color: white;
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
+        }
+
+        .mode-description {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: rgba(255,255,255,0.8);
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        .difficulty-badge {
+            padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
+            border-radius: 15px;
+            font-size: clamp(0.75rem, 2vw, 0.8rem);
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .easy { background: var(--success-gradient); color: white; }
+        .medium { background: var(--accent-gradient); color: #2d3436; }
+        .hard { background: var(--danger-gradient); color: white; }
+
+        /* 게임 화면 */
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .quiz-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: clamp(1.5rem, 4vw, 2rem);
+            border: 1px solid var(--glass-border);
+            padding: clamp(2rem, 5vw, 3rem);
+            box-shadow: var(--glass-shadow);
+            text-align: center;
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            animation: fadeIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(2rem, 5vw, 2.5rem);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .score {
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            font-weight: 600;
+            color: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.5rem);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-number {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            color: rgba(255,255,255,0.8);
+            font-weight: 500;
+        }
+
+        .flag-display {
+            width: clamp(280px, 50vw, 350px);
+            height: clamp(180px, 30vw, 220px);
+            margin: 0 auto clamp(1.5rem, 4vw, 2rem);
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: clamp(1rem, 3vw, 1.5rem);
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            background: rgba(248,249,250,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .flag-display img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .flag-emoji {
+            font-size: clamp(4rem, 10vw, 5rem);
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        .question-text {
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .country-name, .capital-name {
+            font-size: clamp(1.2rem, 3vw, 1.4rem);
+            color: white;
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 600;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid var(--glass-border);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(clamp(200px, 40vw, 250px), 1fr));
+            gap: clamp(1rem, 3vw, 1.5rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        .option-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--glass-border);
+            padding: clamp(1rem, 3vw, 1.25rem) clamp(1.25rem, 3vw, 1.5rem);
+            border-radius: clamp(0.75rem, 2vw, 1rem);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: 500;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+            border-color: rgba(102,126,234,0.5);
+        }
+
+        .option-btn.correct {
+            background: var(--success-gradient);
+            border-color: rgba(0, 184, 148, 0.6);
+            animation: correctPulse 0.6s ease-out;
+        }
+
+        .option-btn.incorrect {
+            background: var(--danger-gradient);
+            border-color: rgba(255, 107, 107, 0.6);
+            animation: incorrectShake 0.6s ease-out;
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* 결과 표시 */
+        .result {
+            margin: clamp(1.5rem, 4vw, 2rem) 0;
+            padding: clamp(1.25rem, 3vw, 1.5rem);
+            border-radius: clamp(1rem, 3vw, 1.25rem);
+            font-weight: 600;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            animation: slideInUp 0.5s ease-out;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .result.correct {
+            background: rgba(0, 184, 148, 0.15);
+            color: #00b894;
+            border-color: rgba(0, 184, 148, 0.3);
+        }
+
+        .result.incorrect {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        /* 액션 버튼 */
+        .next-btn, .restart-btn {
+            background: var(--accent-gradient);
+            color: #2d3436;
+            border: none;
+            padding: clamp(0.875rem, 2vw, 1.125rem) clamp(1.5rem, 4vw, 2.5rem);
+            border-radius: clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin-top: clamp(1rem, 3vw, 1.5rem);
+            box-shadow: 0 6px 20px rgba(253, 203, 110, 0.3);
+            touch-action: manipulation;
+        }
+
+        .next-btn:hover, .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(253, 203, 110, 0.5);
+        }
+
+        .restart-btn {
+            background: var(--success-gradient);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
+        }
+
+        /* 최종 점수 화면 */
+        .final-score {
+            text-align: center;
+            padding: clamp(2.5rem, 6vw, 3.5rem) clamp(2rem, 5vw, 2.5rem);
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: clamp(1.5rem, 4vw, 2rem);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            animation: bounceIn 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-score h2 {
+            color: white;
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Jua', sans-serif;
+        }
+
+        .final-score p {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* 이름 입력 섹션 */
+        .name-input-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+        }
+
+        .name-input-section h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .name-input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #playerNameInput {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid var(--glass-border);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            width: 120px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        #playerNameInput:focus {
+            outline: none;
+            border-color: rgba(102,126,234,0.5);
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.2);
+        }
+
+        #playerNameInput::placeholder {
+            color: rgba(255,255,255,0.4);
+            letter-spacing: normal;
+        }
+
+        #saveScoreBtn {
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
+        }
+
+        #saveScoreBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 184, 148, 0.5);
+        }
+
+        .input-hint {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* 명예의 전당 */
+        .hall-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 2rem;
+        }
+
+        .hall-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .hall-header h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-family: 'Jua', sans-serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hall-mode-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 1.5rem;
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .hall-mode-section h3 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+        }
+
+        .score-table th {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .score-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .score-table tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), transparent);
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, rgba(192,192,192,0.1), transparent);
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, rgba(205,127,50,0.1), transparent);
+        }
+
+        .player-name {
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .percentage {
+            font-weight: 700;
+            color: #ffeaa7;
+        }
+
+        .no-scores {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        /* 플로팅 요소 */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-flag {
+            position: absolute;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            opacity: 0.1;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-flag:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-flag:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+        .floating-flag:nth-child(3) { top: 60%; left: 8%; animation-delay: 2s; }
+        .floating-flag:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 3s; }
+        .floating-flag:nth-child(5) { bottom: 40%; left: 20%; animation-delay: 4s; }
+
+        /* 애니메이션 */
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes bounceIn {
+            0%, 20%, 40%, 60%, 80%, 100% {
+                animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+            }
+            0% { opacity: 0; transform: scale3d(.3, .3, .3); }
+            20% { transform: scale3d(1.1, 1.1, 1.1); }
+            40% { transform: scale3d(.9, .9, .9); }
+            60% { opacity: 1; transform: scale3d(1.03, 1.03, 1.03); }
+            80% { transform: scale3d(.97, .97, .97); }
+            100% { opacity: 1; transform: scale3d(1, 1, 1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* 반응형 */
+        @media (hover: none) and (pointer: coarse) {
+            /* 터치 디바이스 최적화 */
+            .category-card, .mode-card, .option-btn {
+                transition: transform 0.2s ease;
+            }
+            
+            .category-card:active, .mode-card:active, .option-btn:active {
+                transform: scale(0.98);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.75rem;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .game-modes {
+                grid-template-columns: 1fr;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .hall-btn-wrapper {
+                position: static;
+                margin-bottom: 1rem;
+                display: flex;
+                justify-content: center;
+            }
+
+            .score-table {
+                font-size: 0.9rem;
+            }
+
+            .score-table th, .score-table td {
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .category-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .quiz-container {
+                padding: 1.5rem;
+            }
+
+            .name-input-group {
+                flex-direction: column;
+            }
+
+            #playerNameInput {
+                font-size: 1.2rem;
+                width: 100px;
+                letter-spacing: 6px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <!-- 날짜 헤더 -->
+        <div class="date-header">
+            <div class="today-date" id="today-date">📅 2025년 8월 7일</div>
+        </div>
+
+        <!-- 메뉴 오버레이 -->
+        <div class="menu-overlay" id="menu-overlay"></div>
+
+        <!-- 햄버거 메뉴 버튼 (항상 표시) -->
+        <button class="menu-toggle-btn" onclick="toggleControlPanel()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- 명예의 전당 버튼 -->
+        <div class="hall-btn-wrapper">
+            <button class="hall-of-fame-btn" onclick="showHallOfFame()">
+                🏆 명예의 전당
+            </button>
+        </div>
+
         <!-- 메인 메뉴 화면 -->
         <div id="mainScreen">
             <div class="floating-elements">
@@ -964,137 +991,175 @@
                 <div class="floating-flag">🇬🇧</div>
             </div>
 
-```
-        <div class="main-header">
-            <h1>🌍 Flag Master</h1>
-            <div class="subtitle">전 세계 국기와 수도를 마스터하세요!</div>
-            <div class="stats-info">
-                ✨ 195개국 완전 지원 • 🎯 5가지 게임 모드 • 🏆 실력 테스트
-            </div>
-        </div>
-
-        <div class="main-menu">
-            <div class="category-card" onclick="showCountryMenu()">
-                <div class="category-icon">🏳️</div>
-                <div class="category-title">국가 맞추기</div>
-                <div class="category-description">
-                    국기를 보고 나라를 맞추거나<br>
-                    나라 이름을 보고 국기를 찾아보세요
+            <div class="title-section">
+                <h1 class="main-title">🌍 Flag Master</h1>
+                <p class="subtitle">전 세계 국기와 수도를 마스터하세요!</p>
+                <div class="stats-info">
+                    ✨ 195개국 완전 지원 • 🎯 5가지 게임 모드 • 🏆 실력 테스트
                 </div>
-                <div class="mode-count">2가지 모드</div>
             </div>
 
-            <div class="category-card" onclick="showCapitalMenu()">
-                <div class="category-icon">🏙️</div>
-                <div class="category-title">수도 맞추기</div>
-                <div class="category-description">
-                    다양한 난이도로<br>
-                    세계 각국의 수도를 정복하세요
+            <div class="categories-grid">
+                <div class="category-card" onclick="showCountryMenu()">
+                    <div class="category-icon">🏳️</div>
+                    <div class="category-title">국가 맞추기</div>
+                    <div class="category-description">
+                        국기를 보고 나라를 맞추거나<br>
+                        나라 이름을 보고 국기를 찾아보세요
+                    </div>
+                    <div class="mode-count">2가지 모드</div>
                 </div>
-                <div class="mode-count">3가지 모드</div>
+
+                <div class="category-card" onclick="showCapitalMenu()">
+                    <div class="category-icon">🏙️</div>
+                    <div class="category-title">수도 맞추기</div>
+                    <div class="category-description">
+                        다양한 난이도로<br>
+                        세계 각국의 수도를 정복하세요
+                    </div>
+                    <div class="mode-count">3가지 모드</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 국가 맞추기 서브 메뉴 -->
+        <div id="countryMenu" class="sub-menu hidden">
+            <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+            <div class="sub-menu-header">
+                <h2>🏳️ 국가 맞추기</h2>
+                <p>국기와 국가명으로 실력을 테스트해보세요!</p>
+            </div>
+
+            <div class="game-modes">
+                <div class="mode-card" onclick="startGame('flag-to-country')">
+                    <div class="mode-icon">🏳️➡️🌍</div>
+                    <div class="mode-title">국기 → 나라명</div>
+                    <div class="mode-description">국기를 보고 나라 이름을 맞춰보세요</div>
+                    <div class="difficulty-badge easy">쉬움</div>
+                </div>
+
+                <div class="mode-card" onclick="startGame('country-to-flag')">
+                    <div class="mode-icon">🌍➡️🏳️</div>
+                    <div class="mode-title">나라명 → 국기</div>
+                    <div class="mode-description">나라 이름을 보고 국기를 맞춰보세요</div>
+                    <div class="difficulty-badge medium">보통</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 수도 맞추기 서브 메뉴 -->
+        <div id="capitalMenu" class="sub-menu hidden">
+            <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+            <div class="sub-menu-header">
+                <h2>🏙️ 수도 맞추기</h2>
+                <p>난이도를 선택하여 세계 수도를 마스터하세요!</p>
+            </div>
+
+            <div class="game-modes">
+                <div class="mode-card" onclick="startGame('capital-easy')">
+                    <div class="mode-icon">🏳️🌍➡️🏙️</div>
+                    <div class="mode-title">국기+나라 → 수도</div>
+                    <div class="mode-description">국기와 나라명을 보고 수도를 맞춰보세요</div>
+                    <div class="difficulty-badge easy">쉬움</div>
+                </div>
+
+                <div class="mode-card" onclick="startGame('capital-hard')">
+                    <div class="mode-icon">🏳️➡️🏙️</div>
+                    <div class="mode-title">국기 → 수도</div>
+                    <div class="mode-description">국기만 보고 수도를 맞춰보세요</div>
+                    <div class="difficulty-badge hard">어려움</div>
+                </div>
+
+                <div class="mode-card" onclick="startGame('capital-to-flag')">
+                    <div class="mode-icon">🏙️➡️🏳️</div>
+                    <div class="mode-title">수도 → 국기</div>
+                    <div class="mode-description">수도 이름을 보고 국기를 맞춰보세요</div>
+                    <div class="difficulty-badge medium">보통</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 게임 플레이 화면 -->
+        <div id="gameScreen" class="game-container hidden">
+            <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+            
+            <div class="quiz-container">
+                <div class="quiz-info">
+                    <div class="score" id="score">점수: 0/0</div>
+                    <div class="question-number" id="questionNumber">문제 1/10</div>
+                </div>
+
+                <div class="flag-display" id="flagDisplay">
+                    <div class="loading">문제를 준비중...</div>
+                </div>
+
+                <div class="country-name hidden" id="countryName"></div>
+                <div class="capital-name hidden" id="capitalName"></div>
+
+                <div class="question-text" id="questionText">문제를 준비중입니다...</div>
+
+                <div class="options" id="options">
+                    <!-- 옵션들이 여기에 동적으로 생성됩니다 -->
+                </div>
+
+                <div class="result hidden" id="result"></div>
+
+                <button class="next-btn hidden" id="nextBtn">다음 문제</button>
+            </div>
+
+            <div id="finalScore" class="final-score hidden">
+                <h2>🎉 게임 완료!</h2>
+                <p id="finalScoreText">10문제 중 0문제 정답!</p>
+                <div id="scoreMessage"></div>
+                
+                <!-- 이름 입력 섹션 -->
+                <div id="nameInputSection" class="name-input-section hidden">
+                    <h3>🏆 명예의 전당에 기록하시겠습니까?</h3>
+                    <div class="name-input-group">
+                        <input type="text" id="playerNameInput" placeholder="AAA" maxlength="3" autocomplete="off">
+                        <button id="saveScoreBtn">저장</button>
+                    </div>
+                    <div class="input-hint">영문/숫자 3글자로 입력하세요</div>
+                </div>
+                
+                <button class="restart-btn" id="restartBtn">다시 시작</button>
+                <button class="back-btn" onclick="showMainMenu()" style="margin-left: 15px;">메인으로</button>
+                <button id="viewHallOfFameBtn" class="back-btn hidden" onclick="showHallOfFame()" style="margin-left: 15px; background: var(--accent-gradient); color: #2d3436;">🏆 명예의 전당 보기</button>
+            </div>
+        </div>
+
+        <!-- 명예의 전당 화면 -->
+        <div id="hallOfFameScreen" class="hall-container hidden">
+            <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+            <div class="hall-header">
+                <h2>🏆 명예의 전당</h2>
+                <p>각 모드별 최고 기록을 확인하세요!</p>
+            </div>
+            <div id="hallOfFameContainer">
+                <!-- 점수들이 여기에 동적으로 표시됩니다 -->
             </div>
         </div>
     </div>
 
-    <!-- 국가 맞추기 서브 메뉴 -->
-    <div id="countryMenu" class="sub-menu hidden">
-        <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
-        <div class="sub-menu-header">
-            <h2>🏳️ 국가 맞추기</h2>
-            <p>국기와 국가명으로 실력을 테스트해보세요!</p>
-        </div>
+    <!-- JavaScript 파일 로드 -->
+    <script src="countries.js"></script>
+    <script src="game.js"></script>
+    <script>
+        // 날짜 업데이트
+        function updateDate() {
+            const today = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            };
+            const dateString = today.toLocaleDateString('ko-KR', options);
+            document.getElementById('today-date').textContent = `📅 ${dateString}`;
+        }
 
-        <div class="game-modes">
-            <div class="mode-card" onclick="startGame('flag-to-country')">
-                <div class="mode-icon">🏳️➡️🌍</div>
-                <div class="mode-title">국기 → 나라명</div>
-                <div class="mode-description">국기를 보고 나라 이름을 맞춰보세요</div>
-                <div class="difficulty-badge easy">쉬움</div>
-            </div>
-
-            <div class="mode-card" onclick="startGame('country-to-flag')">
-                <div class="mode-icon">🌍➡️🏳️</div>
-                <div class="mode-title">나라명 → 국기</div>
-                <div class="mode-description">나라 이름을 보고 국기를 맞춰보세요</div>
-                <div class="difficulty-badge medium">보통</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 수도 맞추기 서브 메뉴 -->
-    <div id="capitalMenu" class="sub-menu hidden">
-        <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
-        <div class="sub-menu-header">
-            <h2>🏙️ 수도 맞추기</h2>
-            <p>난이도를 선택하여 세계 수도를 마스터하세요!</p>
-        </div>
-
-        <div class="game-modes">
-            <div class="mode-card" onclick="startGame('capital-easy')">
-                <div class="mode-icon">🏳️🌍➡️🏙️</div>
-                <div class="mode-title">국기+나라 → 수도</div>
-                <div class="mode-description">국기와 나라명을 보고 수도를 맞춰보세요</div>
-                <div class="difficulty-badge easy">쉬움</div>
-            </div>
-
-            <div class="mode-card" onclick="startGame('capital-hard')">
-                <div class="mode-icon">🏳️➡️🏙️</div>
-                <div class="mode-title">국기 → 수도</div>
-                <div class="mode-description">국기만 보고 수도를 맞춰보세요</div>
-                <div class="difficulty-badge hard">어려움</div>
-            </div>
-
-            <div class="mode-card" onclick="startGame('capital-to-flag')">
-                <div class="mode-icon">🏙️➡️🏳️</div>
-                <div class="mode-title">수도 → 국기</div>
-                <div class="mode-description">수도 이름을 보고 국기를 맞춰보세요</div>
-                <div class="difficulty-badge medium">보통</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 게임 플레이 화면 -->
-    <div id="gameScreen" class="game-container hidden">
-        <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
-        
-        <div class="quiz-container">
-            <div class="quiz-info">
-                <div class="score" id="score">점수: 0/0</div>
-                <div class="question-number" id="questionNumber">문제 1/10</div>
-            </div>
-
-            <div class="flag-display" id="flagDisplay">
-                <div class="loading">문제를 준비중...</div>
-            </div>
-
-            <div class="country-name hidden" id="countryName"></div>
-            <div class="capital-name hidden" id="capitalName"></div>
-
-            <div class="question-text" id="questionText">문제를 준비중입니다...</div>
-
-            <div class="options" id="options">
-                <!-- 옵션들이 여기에 동적으로 생성됩니다 -->
-            </div>
-
-            <div class="result hidden" id="result"></div>
-
-            <button class="next-btn hidden" id="nextBtn">다음 문제</button>
-        </div>
-
-        <div id="finalScore" class="final-score hidden">
-            <h2>🎉 게임 완료!</h2>
-            <p id="finalScoreText">10문제 중 0문제 정답!</p>
-            <div id="scoreMessage"></div>
-            <button class="restart-btn" id="restartBtn">다시 시작</button>
-            <button class="back-btn" onclick="showMainMenu()" style="margin-left: 15px;">메인으로</button>
-        </div>
-    </div>
-</div>
-
-<!-- 외부 JS 파일들 로드 -->
-<script src="countries.js"></script>
-<script src="game.js"></script>
-```
-
+        // 페이지 로드 시 날짜 업데이트
+        document.addEventListener('DOMContentLoaded', updateDate);
+    </script>
 </body>
 </html>
