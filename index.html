@@ -7,9 +7,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#667eea">
     <title>🌍 율이의 - 세계 국기 마스터</title>
-	<!-- 아이폰 홈 화면 아이콘 -->
-	<link rel="apple-touch-icon" href="image.png">
-	<link rel="icon" type="image/png" href="image.png">
+    <!-- 아이폰 홈 화면 아이콘 -->
+    <link rel="apple-touch-icon" href="image.png">
+    <link rel="icon" type="image/png" href="image.png">
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -543,6 +543,13 @@
             color: white;
             box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
         }
+        
+        /* 게임 종료 버튼 수정 */
+        .finish-early-section {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px dashed rgba(255,255,255,0.2);
+        }
 
         /* 최종 점수 화면 */
         .final-score {
@@ -684,6 +691,7 @@
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: var(--glass-shadow);
+            overflow-x: auto;
         }
 
         .hall-mode-section h3 {
@@ -695,6 +703,7 @@
 
         .score-table {
             width: 100%;
+            min-width: 400px;
             border-collapse: collapse;
             color: white;
         }
@@ -705,11 +714,13 @@
             text-align: left;
             font-weight: 600;
             border-bottom: 2px solid rgba(255,255,255,0.2);
+            white-space: nowrap;
         }
 
         .score-table td {
             padding: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
         }
 
         .score-table tr:hover {
@@ -730,7 +741,8 @@
 
         .player-name {
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            font-family: 'Noto Sans KR', sans-serif;
         }
 
         .percentage {
@@ -889,9 +901,8 @@
             }
 
             #playerNameInput {
-                font-size: 1.2rem;
-                width: 100px;
-                letter-spacing: 6px;
+                font-size: 1rem;
+                width: 200px;
             }
         }
 
@@ -927,10 +938,10 @@
             </div>
 
             <div class="title-section">
-                <h1 class="main-title">🌍 율이의 국가 마스터</h1>
+                <h1 class="main-title">율이의 국기 마스터</h1>
                 <p class="subtitle">율이와! 전 세계 국기와 수도를 마스터하세요!</p>
                 <div class="stats-info">
-                    ✨ 195개국 완전 지원 • 🎯 5가지 게임 모드 • 🏆 실력 테스트
+                    ✨ 율이와 함께 • 🎯 5가지 게임 모드 • 🏆 실력 테스트
                 </div>
             </div>
 
@@ -1014,12 +1025,12 @@
 				<!-- 율이 모드 (숨김) -->
 				<div id="yuliModeCard" class="mode-card hidden" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: 2px solid rgba(255,255,255,0.3); cursor: default;">
 					<div class="mode-icon">✨</div>
-					<div class="mode-title">율이 모드</div>
+					<div class="mode-title">율이 전용</div>
 					<div class="mode-description">
-						율이가 좋아하는 34개국만!<br>
+						율이가 좋아하는 나라만!<br>
 						<strong style="font-size: 0.8rem;">한국, 일본, 중국, 미국 등</strong>
 					</div>
-					<div class="difficulty-badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">특별</div>
+					<div class="difficulty-badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">율이 전용 모드^^</div>
 					<div style="margin-top: 1rem;">
 						<button onclick="event.stopPropagation(); startGame('capital-easy-yuli')" style="margin: 5px; padding: 10px 15px; background: rgba(255,255,255,0.2); border: 1px solid white; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s;">국기+나라→수도</button>
 						<button onclick="event.stopPropagation(); startGame('capital-hard-yuli')" style="margin: 5px; padding: 10px 15px; background: rgba(255,255,255,0.2); border: 1px solid white; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s;">국기→수도</button>
@@ -1036,7 +1047,7 @@
             <div class="quiz-container">
                 <div class="quiz-info">
                     <div class="score" id="score">점수: 0/0</div>
-                    <div class="question-number" id="questionNumber">문제 1/195</div>
+                    <!--<div class="question-number" id="questionNumber">문제 1/195</div>-->
                 </div>
 
                 <div class="flag-display" id="flagDisplay">
@@ -1055,7 +1066,7 @@
                 <div class="result hidden" id="result"></div>
 
                 <button class="next-btn hidden" id="nextBtn">다음 문제</button>
-                <button class="restart-btn" id="finishEarlyBtn" onclick="window.flagQuizGame.finishGameEarly()" style="margin-top: 20px; background: var(--danger-gradient);">게임 끝내고 점수 보기</button>
+                
             </div>
 
             <div id="finalScore" class="final-score hidden">
