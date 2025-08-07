@@ -6,7 +6,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#667eea">
-    <title>🌍 Flag Master - 전 세계 국기 마스터</title>
+    <title>🌍 율이의 - 세계 국기 마스터</title>
+	<!-- 아이폰 홈 화면 아이콘 -->
+	<link rel="apple-touch-icon" href="image.png">
+	<link rel="icon" type="image/png" href="image.png">
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -127,70 +130,6 @@
             border: 1px solid var(--glass-border);
             display: inline-block;
             box-shadow: var(--glass-shadow);
-        }
-
-        /* 햄버거 메뉴 버튼 */
-        .menu-toggle-btn {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            width: 3rem;
-            height: 3rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 1rem;
-            cursor: pointer;
-            z-index: 1001;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 0.25rem;
-            transition: all 0.3s ease;
-            box-shadow: var(--glass-shadow);
-        }
-
-        .menu-toggle-btn span {
-            width: 1.5rem;
-            height: 0.1875rem;
-            background: white;
-            border-radius: 0.1875rem;
-            transition: all 0.3s ease;
-        }
-
-        .menu-toggle-btn.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .menu-toggle-btn.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle-btn.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-
-        /* 메뉴 오버레이 */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 999;
-        }
-
-        .menu-overlay.show {
-            opacity: 1;
-            visibility: visible;
         }
 
         /* 명예의 전당 버튼 */
@@ -661,21 +600,25 @@
         }
 
         #playerNameInput {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 2px solid var(--glass-border);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 15px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            text-align: center;
-            width: 120px;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
+			background: var(--glass-bg);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			border: 2px solid var(--glass-border);
+			color: white;
+			padding: 12px 20px;
+			border-radius: 15px;
+			font-size: 1.2rem;
+			font-weight: 600;
+			text-align: center;
+			width: 250px;
+			letter-spacing: 2px;
+			transition: all 0.3s ease;
+		}
+		
+		@keyframes fadeOut {
+			from { opacity: 1; }
+			to { opacity: 0; }
+		}
 
         #playerNameInput:focus {
             outline: none;
@@ -964,15 +907,7 @@
             <div class="today-date" id="today-date">📅 2025년 8월 7일</div>
         </div>
 
-        <!-- 메뉴 오버레이 -->
-        <div class="menu-overlay" id="menu-overlay"></div>
 
-        <!-- 햄버거 메뉴 버튼 (항상 표시) -->
-        <button class="menu-toggle-btn" onclick="toggleControlPanel()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
 
         <!-- 명예의 전당 버튼 -->
         <div class="hall-btn-wrapper">
@@ -992,8 +927,8 @@
             </div>
 
             <div class="title-section">
-                <h1 class="main-title">🌍 Flag Master</h1>
-                <p class="subtitle">전 세계 국기와 수도를 마스터하세요!</p>
+                <h1 class="main-title">🌍 율이의 국가 마스터</h1>
+                <p class="subtitle">율이와! 전 세계 국기와 수도를 마스터하세요!</p>
                 <div class="stats-info">
                     ✨ 195개국 완전 지원 • 🎯 5가지 게임 모드 • 🏆 실력 테스트
                 </div>
@@ -1073,20 +1008,35 @@
                 <div class="mode-card" onclick="startGame('capital-to-flag')">
                     <div class="mode-icon">🏙️➡️🏳️</div>
                     <div class="mode-title">수도 → 국기</div>
-                    <div class="mode-description">수도 이름을 보고 국기를 맞춰보세요</div>
+                    <div class="mode-description">수도 이름을 보고 해당 나라의 국기를 맞춰보세요</div>
                     <div class="difficulty-badge medium">보통</div>
                 </div>
+				<!-- 율이 모드 (숨김) -->
+				<div id="yuliModeCard" class="mode-card hidden" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: 2px solid rgba(255,255,255,0.3); cursor: default;">
+					<div class="mode-icon">✨</div>
+					<div class="mode-title">율이 모드</div>
+					<div class="mode-description">
+						율이가 좋아하는 34개국만!<br>
+						<strong style="font-size: 0.8rem;">한국, 일본, 중국, 미국 등</strong>
+					</div>
+					<div class="difficulty-badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">특별</div>
+					<div style="margin-top: 1rem;">
+						<button onclick="event.stopPropagation(); startGame('capital-easy-yuli')" style="margin: 5px; padding: 10px 15px; background: rgba(255,255,255,0.2); border: 1px solid white; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s;">국기+나라→수도</button>
+						<button onclick="event.stopPropagation(); startGame('capital-hard-yuli')" style="margin: 5px; padding: 10px 15px; background: rgba(255,255,255,0.2); border: 1px solid white; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s;">국기→수도</button>
+						<button onclick="event.stopPropagation(); startGame('capital-to-flag-yuli')" style="margin: 5px; padding: 10px 15px; background: rgba(255,255,255,0.2); border: 1px solid white; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s;">수도→국기</button>
+					</div>
+				</div>
             </div>
         </div>
 
         <!-- 게임 플레이 화면 -->
         <div id="gameScreen" class="game-container hidden">
-            <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기</button>
+            <button class="back-btn" onclick="showMainMenu()">← 메인으로 돌아가기 (게임 종료)</button>
             
             <div class="quiz-container">
                 <div class="quiz-info">
                     <div class="score" id="score">점수: 0/0</div>
-                    <div class="question-number" id="questionNumber">문제 1/10</div>
+                    <div class="question-number" id="questionNumber">문제 1/195</div>
                 </div>
 
                 <div class="flag-display" id="flagDisplay">
@@ -1105,21 +1055,22 @@
                 <div class="result hidden" id="result"></div>
 
                 <button class="next-btn hidden" id="nextBtn">다음 문제</button>
+                <button class="restart-btn" id="finishEarlyBtn" onclick="window.flagQuizGame.finishGameEarly()" style="margin-top: 20px; background: var(--danger-gradient);">게임 끝내고 점수 보기</button>
             </div>
 
             <div id="finalScore" class="final-score hidden">
                 <h2>🎉 게임 완료!</h2>
-                <p id="finalScoreText">10문제 중 0문제 정답!</p>
+                <p id="finalScoreText">195개국 중 0개국 정답!</p>
                 <div id="scoreMessage"></div>
                 
                 <!-- 이름 입력 섹션 -->
                 <div id="nameInputSection" class="name-input-section hidden">
                     <h3>🏆 명예의 전당에 기록하시겠습니까?</h3>
                     <div class="name-input-group">
-                        <input type="text" id="playerNameInput" placeholder="AAA" maxlength="3" autocomplete="off">
+                        <input type="text" id="playerNameInput" placeholder="이름 입력" maxlength="10" autocomplete="off">
                         <button id="saveScoreBtn">저장</button>
                     </div>
-                    <div class="input-hint">영문/숫자 3글자로 입력하세요</div>
+                    <div class="input-hint">한글/영문/숫자 10글자 이내로 입력하세요</div>
                 </div>
                 
                 <button class="restart-btn" id="restartBtn">다시 시작</button>
