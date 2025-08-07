@@ -55,7 +55,7 @@ function showGameScreen() {
     if (hallOfFameScreen) hallOfFameScreen.classList.add('hidden');
 }
 
-function showHallOfFame() {
+async function showHallOfFame() {
     const mainScreen = document.getElementById('mainScreen');
     const countryMenu = document.getElementById('countryMenu');
     const capitalMenu = document.getElementById('capitalMenu');
@@ -70,7 +70,7 @@ function showHallOfFame() {
     
     // 명예의 전당 데이터 로드 및 표시
     if (window.hallOfFame) {
-        window.hallOfFame.displayAllScores();
+        await window.hallOfFame.displayAllScores();
     }
 }
 
@@ -84,7 +84,7 @@ function startGame(mode) {
 // 명예의 전당 관리 클래스
 class HallOfFame {
     constructor() {
-        this.storageKey = 'flagMasterHallOfFame';
+        this.SHEET_URL = 'https://script.google.com/macros/s/AKfycbwXw_PbAHMi6GjR-Oc6yCJ09TVuNvJ6XqmrhVIYGRxi-5MGTY812bRESFUt2LEdqvTE/exec';
         this.maxEntries = 10;
     }
 
@@ -95,14 +95,13 @@ class HallOfFame {
         return div.innerHTML;
     }
 
-    // 점수 저장
-    saveScore(name, score, totalQuestions, mode) {
-        // 이름 검증 (10글자, 한글/영문/숫자만)
-        const sanitizedName = name.trim().replace(/[^가-힣A-Za-z0-9]/g, '').slice(0, 10);
+    // 점수 저장 (Google Sheets에)
+    async saveScore(name, score, totalQuestions, mode, timeTaken) {
+        const sanitizedName = name.trim().slice(0, 10);
         if (sanitizedName.length === 0) return false;
 
-        const scores = this.getScores();
-        const percentage = Math.round((score / totalQuestions) * 100);
+        const maxQuestions = mode.includes('yuli') ? 34 : 195;
+        const percentage = Math.round((score / maxQuestions) * 100);
         
         const newEntry = {
             name: sanitizedName,
@@ -110,45 +109,85 @@ class HallOfFame {
             total: totalQuestions,
             percentage: percentage,
             mode: mode,
+            timeTaken: timeTaken,
             date: new Date().toISOString()
         };
 
-        // 모드별로 점수 추가
-        if (!scores[mode]) scores[mode] = [];
-        scores[mode].push(newEntry);
-
-        // 정렬 (점수 높은 순, 같으면 날짜 최신순)
-        scores[mode].sort((a, b) => {
-            if (b.percentage !== a.percentage) return b.percentage - a.percentage;
-            if (b.score !== a.score) return b.score - a.score;
-            return new Date(b.date) - new Date(a.date);
-        });
-
-        // 상위 10개만 유지
-        scores[mode] = scores[mode].slice(0, this.maxEntries);
-
-        localStorage.setItem(this.storageKey, JSON.stringify(scores));
-        return true;
+        try {
+            // Google Sheets에 저장
+            await fetch(this.SHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify(newEntry),
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('점수 저장 실패:', error);
+            // 오프라인 대비 localStorage에도 저장
+            this.saveToLocalStorage(newEntry);
+            return true;
+        }
     }
 
-    // 점수 불러오기
-    getScores() {
-        const stored = localStorage.getItem(this.storageKey);
-        return stored ? JSON.parse(stored) : {};
+    // 점수 불러오기 (Google Sheets에서)
+    async getScores() {
+        try {
+            const response = await fetch(this.SHEET_URL);
+            const allScores = await response.json();
+            
+            // 모드별로 그룹화
+            const groupedScores = {};
+            allScores.forEach(score => {
+                if (!groupedScores[score.mode]) {
+                    groupedScores[score.mode] = [];
+                }
+                groupedScores[score.mode].push(score);
+            });
+            
+            // 각 모드별로 정렬하고 상위 10개만
+            for (const mode in groupedScores) {
+                groupedScores[mode].sort((a, b) => {
+                    if (b.percentage !== a.percentage) return b.percentage - a.percentage;
+                    if (b.score !== a.score) return b.score - a.score;
+                    if (a.timeTaken !== b.timeTaken) return a.timeTaken - b.timeTaken;
+                    return new Date(b.date) - new Date(a.date);
+                });
+                groupedScores[mode] = groupedScores[mode].slice(0, this.maxEntries);
+            }
+            
+            return groupedScores;
+        } catch (error) {
+            console.error('점수 불러오기 실패:', error);
+            // 오프라인 시 localStorage 사용
+            return JSON.parse(localStorage.getItem('flagMasterHallOfFame') || '{}');
+        }
+    }
+
+    // 로컬 저장소에 백업
+    saveToLocalStorage(entry) {
+        const scores = JSON.parse(localStorage.getItem('flagMasterHallOfFame') || '{}');
+        if (!scores[entry.mode]) scores[entry.mode] = [];
+        scores[entry.mode].push(entry);
+        localStorage.setItem('flagMasterHallOfFame', JSON.stringify(scores));
     }
 
     // 특정 모드의 점수 불러오기
-    getScoresByMode(mode) {
-        const scores = this.getScores();
+    async getScoresByMode(mode) {
+        const scores = await this.getScores();
         return scores[mode] || [];
     }
 
     // 모든 점수 표시
-    displayAllScores() {
+    async displayAllScores() {
         const container = document.getElementById('hallOfFameContainer');
         if (!container) return;
         
-        const scores = this.getScores();
+        container.innerHTML = '<p style="text-align: center; color: white;">점수를 불러오는 중...</p>';
+        
+        const scores = await this.getScores();
         
         const modeNames = {
             'flag-to-country': '🏳️ 국기 → 나라명',
@@ -171,19 +210,25 @@ class HallOfFame {
                 html += `<p class="no-scores">아직 기록이 없습니다</p>`;
             } else {
                 html += `<table class="score-table">`;
-                html += `<thead><tr><th>순위</th><th>이름</th><th>점수</th><th>정답률</th><th>날짜</th></tr></thead>`;
+                html += `<thead><tr><th>순위</th><th>이름</th><th>점수</th><th>정답률</th><th>시간</th><th>날짜</th></tr></thead>`;
                 html += `<tbody>`;
-                
+
                 modeScores.forEach((entry, index) => {
                     const date = new Date(entry.date);
                     const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
                     const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                    
+                    // 시간 포맷팅 (분:초)
+                    const minutes = Math.floor(entry.timeTaken / 60);
+                    const seconds = entry.timeTaken % 60;
+                    const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                     
                     html += `<tr class="rank-${index + 1}">`;
                     html += `<td>${medalEmoji} ${index + 1}</td>`;
                     html += `<td class="player-name">${this.escapeHtml(entry.name)}</td>`;
                     html += `<td>${entry.score}/${entry.total}</td>`;
                     html += `<td class="percentage">${entry.percentage}%</td>`;
+                    html += `<td>${timeStr}</td>`;
                     html += `<td>${dateStr}</td>`;
                     html += `</tr>`;
                 });
@@ -207,6 +252,8 @@ class FlagQuizGame {
         this.questions = [];
         this.currentQuestionData = null;
         this.answered = false;
+		this.startTime = null;
+		this.elapsedTime = 0;
         
         // 명예의 전당 인스턴스
         this.hallOfFame = new HallOfFame();
@@ -262,8 +309,8 @@ class FlagQuizGame {
         const nameInput = document.getElementById('playerNameInput');
         if (nameInput) {
             nameInput.addEventListener('input', (e) => {
-                // 10글자로 제한, 한글/영문/숫자만
-                e.target.value = e.target.value.replace(/[^가-힣A-Za-z0-9]/g, '').slice(0, 10);
+                // 10글자로 제한
+                e.target.value = e.target.value.slice(0, 10);
             });
             
             nameInput.addEventListener('keypress', (e) => {
@@ -280,24 +327,16 @@ class FlagQuizGame {
         const capitalMenu = document.getElementById('capitalMenu');
         if (!capitalMenu) return;
         
+        let clickCount = 0;
+        
         capitalMenu.addEventListener('click', (e) => {
-            // 게임 모드 카드가 아닌 빈 공간을 클릭했는지 확인
-            if (e.target === capitalMenu || e.target.classList.contains('sub-menu-header')) {
-                const now = Date.now();
+            // 빈 공간 클릭 시
+            if (e.target === capitalMenu || e.target.classList.contains('sub-menu-header') || e.target.tagName === 'H2' || e.target.tagName === 'P') {
+                clickCount++;
                 
-                // 첫 클릭이거나 10초가 지났으면 초기화
-                if (!this.firstClickTime || now - this.firstClickTime > 10000) {
-                    this.clickCount = 1;
-                    this.firstClickTime = now;
-                } else {
-                    this.clickCount++;
-                    
-                    // 5번 클릭하면 율이 모드 표시
-                    if (this.clickCount >= 5) {
-                        this.showYuliMode();
-                        this.clickCount = 0;
-                        this.firstClickTime = null;
-                    }
+                if (clickCount >= 3) {  // 3번으로 줄임
+                    this.showYuliMode();
+                    clickCount = 0;
                 }
             }
         });
@@ -337,11 +376,12 @@ class FlagQuizGame {
     }
 
     // 새 게임 시작
-    startNewGame(mode) {
-        this.currentMode = mode;
-        this.currentQuestion = 0;
-        this.score = 0;
-        this.answered = false;
+	startNewGame(mode) {
+		this.currentMode = mode;
+		this.currentQuestion = 0;
+		this.score = 0;
+		this.answered = false;
+		this.startTime = Date.now(); // 시간 측정 시작
         
         // UI 초기화
         document.getElementById('finalScore').classList.add('hidden');
@@ -412,65 +452,65 @@ class FlagQuizGame {
     }
 
     // 모드별 문제 생성
-createQuestion(correctAnswer) {
-    const question = {
-        country: correctAnswer,
-        mode: this.currentMode,
-        options: []
-    };
+    createQuestion(correctAnswer) {
+        const question = {
+            country: correctAnswer,
+            mode: this.currentMode,
+            options: []
+        };
 
-    // 율이 모드는 일반 모드명에서 -yuli를 제거하고 처리
-    const baseMode = this.currentMode.replace('-yuli', '');
+        // 율이 모드는 일반 모드명에서 -yuli를 제거하고 처리
+        const baseMode = this.currentMode.replace('-yuli', '');
 
-    switch (baseMode) {
-        case 'flag-to-country':
-            question.questionText = '이 국기는 어느 나라의 국기일까요?';
-            question.correctAnswer = correctAnswer.name;
-            question.options = this.generateCountryOptions(correctAnswer);
-            question.showFlag = true;
-            question.showCountryName = false;
-            question.showCapitalName = false;
-            break;
-            
-        case 'country-to-flag':
-            question.questionText = `${correctAnswer.name}의 국기는 어느 것일까요?`;
-            question.correctAnswer = correctAnswer.code;
-            question.options = this.generateFlagOptions(correctAnswer);
-            question.showFlag = false;
-            question.showCountryName = true;
-            question.showCapitalName = false;
-            break;
-            
-        case 'capital-easy':
-            question.questionText = `${correctAnswer.name}의 수도는 어디일까요?`;
-            question.correctAnswer = correctAnswer.capital;
-            question.options = this.generateCapitalOptions(correctAnswer);
-            question.showFlag = true;
-            question.showCountryName = true;
-            question.showCapitalName = false;
-            break;
-            
-        case 'capital-hard':
-            question.questionText = '이 국기의 수도는 어디일까요?';
-            question.correctAnswer = correctAnswer.capital;
-            question.options = this.generateCapitalOptions(correctAnswer);
-            question.showFlag = true;
-            question.showCountryName = false;
-            question.showCapitalName = false;
-            break;
+        switch (baseMode) {
+            case 'flag-to-country':
+                question.questionText = '이 국기는 어느 나라의 국기일까요?';
+                question.correctAnswer = correctAnswer.name;
+                question.options = this.generateCountryOptions(correctAnswer);
+                question.showFlag = true;
+                question.showCountryName = false;
+                question.showCapitalName = false;
+                break;
+                
+            case 'country-to-flag':
+                question.questionText = `${correctAnswer.name}의 국기는 어느 것일까요?`;
+                question.correctAnswer = correctAnswer.code;
+                question.options = this.generateFlagOptions(correctAnswer);
+                question.showFlag = false;
+                question.showCountryName = true;
+                question.showCapitalName = false;
+                break;
+                
+            case 'capital-easy':
+                question.questionText = `${correctAnswer.name}의 수도는 어디일까요?`;
+                question.correctAnswer = correctAnswer.capital;
+                question.options = this.generateCapitalOptions(correctAnswer);
+                question.showFlag = true;
+                question.showCountryName = true;
+                question.showCapitalName = false;
+                break;
+                
+            case 'capital-hard':
+                question.questionText = '이 국기의 수도는 어디일까요?';
+                question.correctAnswer = correctAnswer.capital;
+                question.options = this.generateCapitalOptions(correctAnswer);
+                question.showFlag = true;
+                question.showCountryName = false;
+                question.showCapitalName = false;
+                break;
 
-        case 'capital-to-flag':
-            question.questionText = `${correctAnswer.capital}은(는) 어느 나라의 수도일까요?`;
-            question.correctAnswer = correctAnswer.code;
-            question.options = this.generateFlagOptions(correctAnswer);
-            question.showFlag = false;
-            question.showCountryName = false;
-            question.showCapitalName = true;
-            break;
+            case 'capital-to-flag':
+                question.questionText = `${correctAnswer.capital}은(는) 어느 나라의 수도일까요?`;
+                question.correctAnswer = correctAnswer.code;
+                question.options = this.generateFlagOptions(correctAnswer);
+                question.showFlag = false;
+                question.showCountryName = false;
+                question.showCapitalName = true;
+                break;
+        }
+
+        return question;
     }
-
-    return question;
-}
 
     // 국가명 선택지 생성
     generateCountryOptions(correctCountry) {
@@ -590,12 +630,12 @@ createQuestion(correctAnswer) {
     }
 
     // 문제 정보 업데이트
-    updateQuestionInfo() {
-        document.getElementById('score').textContent = `점수: ${this.score}/${this.currentQuestion}`;
-        const progressText = this.currentMode.includes('yuli') 
-            ? `율이 모드 ${this.currentQuestion + 1}/${this.totalQuestions} (${Math.round(((this.currentQuestion + 1) / this.totalQuestions) * 100)}% 진행)`
-            : `문제 ${this.currentQuestion + 1}/${this.totalQuestions} (${Math.round(((this.currentQuestion + 1) / this.totalQuestions) * 100)}% 진행)`;
-        document.getElementById('questionNumber').textContent = progressText;
+	updateQuestionInfo() {
+		document.getElementById('score').textContent = `점수: ${this.score}/${this.currentQuestion}`;
+        //const progressText = this.currentMode.includes('yuli') 
+        //    ? `율이 모드 ${this.currentQuestion + 1}/${this.totalQuestions} (${Math.round(((this.currentQuestion + 1) / this.totalQuestions) * 100)}% 진행)`
+        //    : `문제 ${this.currentQuestion + 1}/${this.totalQuestions} (${Math.round(((this.currentQuestion + 1) / this.totalQuestions) * 100)}% 진행)`;
+        //document.getElementById('questionNumber').textContent = `문제 ${this.currentQuestion + 1}/${this.totalQuestions}`;
     }
 
     // 컨텐츠 표시 (국기, 국가명, 수도명)
@@ -643,149 +683,149 @@ createQuestion(correctAnswer) {
 
     // 선택지 표시
     displayOptions() {
-		const optionsContainer = document.getElementById('options');
-		optionsContainer.innerHTML = '';
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
 
-		// 율이 모드를 위해 baseMode 추출
-		const baseMode = this.currentMode.replace('-yuli', '');
+        // 율이 모드를 위해 baseMode 추출
+        const baseMode = this.currentMode.replace('-yuli', '');
 
-		this.currentQuestionData.options.forEach((option, index) => {
-			const button = document.createElement('button');
-			button.className = 'option-btn';
-			button.setAttribute('data-option-index', index);
-			
-			// 모드에 따라 다른 형태로 표시
-			if (baseMode === 'country-to-flag' || baseMode === 'capital-to-flag') {
-				// 국기 선택지
-				if (baseMode === 'capital-to-flag') {
-					// 수도→국기 모드: 국기만 표시
-					button.innerHTML = `
-						<img src="${CountryUtils.getFlagImageUrl(option.code)}" 
-							 alt="국기 이미지" 
-							 style="width: 80px; height: 53px; object-fit: cover; border-radius: 8px; pointer-events: none;"
-							 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-						<div style="display:none; font-size: 40px; pointer-events: none;">${option.flag}</div>
-					`;
-				} else {
-					// 나라명→국기 모드: 국기만 표시 (국가명 표시하지 않음)
-					button.innerHTML = `
-						<img src="${CountryUtils.getFlagImageUrl(option.code)}" 
-							 alt="국기 이미지" 
-							 style="width: 80px; height: 53px; object-fit: cover; border-radius: 8px; pointer-events: none;"
-							 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-						<div style="display:none; font-size: 40px; pointer-events: none;">${option.flag}</div>
-					`;
-				}
-				button.setAttribute('data-option-value', option.code);
-			} else {
-				// 텍스트 선택지
-				button.textContent = option;
-				button.setAttribute('data-option-value', option);
-			}
-			
-			button.addEventListener('click', () => this.selectOption(button.getAttribute('data-option-value'), button));
-			optionsContainer.appendChild(button);
-		});
-	}
+        this.currentQuestionData.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.setAttribute('data-option-index', index);
+            
+            // 모드에 따라 다른 형태로 표시
+            if (baseMode === 'country-to-flag' || baseMode === 'capital-to-flag') {
+                // 국기 선택지
+                if (baseMode === 'capital-to-flag') {
+                    // 수도→국기 모드: 국기만 표시
+                    button.innerHTML = `
+                        <img src="${CountryUtils.getFlagImageUrl(option.code)}" 
+                             alt="국기 이미지" 
+                             style="width: 80px; height: 53px; object-fit: cover; border-radius: 8px; pointer-events: none;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display:none; font-size: 40px; pointer-events: none;">${option.flag}</div>
+                    `;
+                } else {
+                    // 나라명→국기 모드: 국기만 표시 (국가명 표시하지 않음)
+                    button.innerHTML = `
+                        <img src="${CountryUtils.getFlagImageUrl(option.code)}" 
+                             alt="국기 이미지" 
+                             style="width: 80px; height: 53px; object-fit: cover; border-radius: 8px; pointer-events: none;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display:none; font-size: 40px; pointer-events: none;">${option.flag}</div>
+                    `;
+                }
+                button.setAttribute('data-option-value', option.code);
+            } else {
+                // 텍스트 선택지
+                button.textContent = option;
+                button.setAttribute('data-option-value', option);
+            }
+            
+            button.addEventListener('click', () => this.selectOption(button.getAttribute('data-option-value'), button));
+            optionsContainer.appendChild(button);
+        });
+    }
 
     // 선택지 선택
     selectOption(selectedOption, buttonElement) {
-		if (this.answered) return;
+        if (this.answered) return;
 
-		this.answered = true;
-		const isCorrect = selectedOption === this.currentQuestionData.correctAnswer;
+        this.answered = true;
+        const isCorrect = selectedOption === this.currentQuestionData.correctAnswer;
 
-		// 모든 버튼 비활성화
-		document.querySelectorAll('.option-btn').forEach(btn => {
-			btn.classList.add('disabled');
-		});
+        // 모든 버튼 비활성화
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.classList.add('disabled');
+        });
 
-		// 율이 모드를 위해 baseMode 추출
-		const baseMode = this.currentMode.replace('-yuli', '');
+        // 율이 모드를 위해 baseMode 추출
+        const baseMode = this.currentMode.replace('-yuli', '');
 
-		// 정답/오답 표시
-		if (baseMode === 'country-to-flag' || baseMode === 'capital-to-flag') {
-			// 국기 선택지의 경우
-			document.querySelectorAll('.option-btn').forEach(btn => {
-				const optionValue = btn.getAttribute('data-option-value');
-				if (optionValue === this.currentQuestionData.correctAnswer) {
-					btn.classList.add('correct');
-				} else if (btn === buttonElement && !isCorrect) {
-					btn.classList.add('incorrect');
-				}
-			});
-		} else {
-			// 텍스트 선택지의 경우
-			document.querySelectorAll('.option-btn').forEach(btn => {
-				if (btn.textContent === this.currentQuestionData.correctAnswer) {
-					btn.classList.add('correct');
-				} else if (btn === buttonElement && !isCorrect) {
-					btn.classList.add('incorrect');
-				}
-			});
-		}
+        // 정답/오답 표시
+        if (baseMode === 'country-to-flag' || baseMode === 'capital-to-flag') {
+            // 국기 선택지의 경우
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                const optionValue = btn.getAttribute('data-option-value');
+                if (optionValue === this.currentQuestionData.correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn === buttonElement && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+        } else {
+            // 텍스트 선택지의 경우
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if (btn.textContent === this.currentQuestionData.correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn === buttonElement && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+        }
 
-		// 결과 표시
-		this.showResult(isCorrect);
+        // 결과 표시
+        this.showResult(isCorrect);
 
-		// 점수 업데이트
-		if (isCorrect) {
-			this.score++;
-		}
+        // 점수 업데이트
+        if (isCorrect) {
+            this.score++;
+        }
 
-		// 다음 문제 버튼 표시
-		document.getElementById('nextBtn').classList.remove('hidden');
-	}
+        // 다음 문제 버튼 표시
+        document.getElementById('nextBtn').classList.remove('hidden');
+    }
 
     // 결과 표시
-	showResult(isCorrect) {
-		const resultDiv = document.getElementById('result');
-		const country = this.currentQuestionData.country;
-		
-		let correctAnswerText = '';
-		let additionalInfo = '';
+    showResult(isCorrect) {
+        const resultDiv = document.getElementById('result');
+        const country = this.currentQuestionData.country;
+        
+        let correctAnswerText = '';
+        let additionalInfo = '';
 
-		// 율이 모드를 위해 baseMode 추출
-		const baseMode = this.currentMode.replace('-yuli', '');
+        // 율이 모드를 위해 baseMode 추출
+        const baseMode = this.currentMode.replace('-yuli', '');
 
-		// 모드에 따른 정답 표시
-		switch (baseMode) {
-			case 'flag-to-country':
-				correctAnswerText = country.name;
-				additionalInfo = `수도: ${country.capital}`;
-				break;
-			case 'country-to-flag':
-				correctAnswerText = `${country.name}의 국기`;
-				additionalInfo = `수도: ${country.capital}`;
-				break;
-			case 'capital-easy':
-			case 'capital-hard':
-				correctAnswerText = country.capital;
-				additionalInfo = `국가: ${country.name}`;
-				break;
-			case 'capital-to-flag':
-				correctAnswerText = country.name;
-				additionalInfo = `${country.capital}은(는) ${country.name}의 수도입니다`;
-				break;
-		}
-		
-		if (isCorrect) {
-			resultDiv.className = 'result correct';
-			resultDiv.innerHTML = `
-				<strong>정답입니다! 🎉</strong>
-				<br>${additionalInfo}
-			`;
-		} else {
-			resultDiv.className = 'result incorrect';
-			resultDiv.innerHTML = `
-				<strong>틀렸습니다. 😞</strong>
-				<br>정답: <strong>${correctAnswerText}</strong>
-				<br>${additionalInfo}
-			`;
-		}
-		
-		resultDiv.classList.remove('hidden');
-	}
+        // 모드에 따른 정답 표시
+        switch (baseMode) {
+            case 'flag-to-country':
+                correctAnswerText = country.name;
+                additionalInfo = `수도: ${country.capital}`;
+                break;
+            case 'country-to-flag':
+                correctAnswerText = `${country.name}의 국기`;
+                additionalInfo = `수도: ${country.capital}`;
+                break;
+            case 'capital-easy':
+            case 'capital-hard':
+                correctAnswerText = country.capital;
+                additionalInfo = `국가: ${country.name}`;
+                break;
+            case 'capital-to-flag':
+                correctAnswerText = country.name;
+                additionalInfo = `${country.capital}은(는) ${country.name}의 수도입니다`;
+                break;
+        }
+        
+        if (isCorrect) {
+            resultDiv.className = 'result correct';
+            resultDiv.innerHTML = `
+                <strong>정답입니다! 🎉</strong>
+                <br>${additionalInfo}
+            `;
+        } else {
+            resultDiv.className = 'result incorrect';
+            resultDiv.innerHTML = `
+                <strong>틀렸습니다. 😞</strong>
+                <br>정답: <strong>${correctAnswerText}</strong>
+                <br>${additionalInfo}
+            `;
+        }
+        
+        resultDiv.classList.remove('hidden');
+    }
 
     // 결과 숨기기
     hideResult() {
@@ -800,22 +840,26 @@ createQuestion(correctAnswer) {
     }
 
     // 최종 점수 표시
-    showFinalScore() {
-        document.querySelector('.quiz-container').classList.add('hidden');
-        document.getElementById('finalScore').classList.remove('hidden');
-        
-        const totalAttempted = this.currentQuestion;
-        const percentage = Math.round((this.score / totalAttempted) * 100);
-        const overallPercentage = Math.round((this.score / this.totalQuestions) * 100);
-        
-        let scoreText = '';
-        if (totalAttempted < this.totalQuestions) {
-            scoreText = `${totalAttempted}개국 도전 중 ${this.score}개국 정답! (${percentage}%)<br>전체 진행률: ${Math.round((totalAttempted / this.totalQuestions) * 100)}%`;
-        } else {
-            scoreText = `전체 ${this.totalQuestions}개국 중 ${this.score}개국 정답! (${percentage}%)`;
-        }
-        
-        document.getElementById('finalScoreText').innerHTML = scoreText;
+	showFinalScore() {
+		// 경과 시간 계산
+		this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+		
+		document.querySelector('.quiz-container').classList.add('hidden');
+		document.getElementById('finalScore').classList.remove('hidden');
+		
+		const totalAttempted = this.currentQuestion;
+		const maxQuestions = this.currentMode.includes('yuli') ? 34 : 195;
+		const percentage = Math.round((this.score / maxQuestions) * 100);
+		const attemptedPercentage = Math.round((this.score / totalAttempted) * 100);
+		
+		let scoreText = '';
+		if (totalAttempted < this.totalQuestions) {
+			scoreText = `${totalAttempted}개국 도전 중 ${this.score}개국 정답! (${attemptedPercentage}%)`;
+		} else {
+			scoreText = `전체 ${this.totalQuestions}개국 중 ${this.score}개국 정답! (${attemptedPercentage}%)`;
+		}
+		
+		document.getElementById('finalScoreText').innerHTML = scoreText;
 
         // 점수에 따른 메시지
         const messageDiv = document.getElementById('scoreMessage');
@@ -875,40 +919,46 @@ createQuestion(correctAnswer) {
 
         // 명예의 전당 입력란 표시
         document.getElementById('nameInputSection').classList.remove('hidden');
-        document.getElementById('playerNameInput').value = '';
-        document.getElementById('playerNameInput').focus();
-    }
+		document.getElementById('playerNameInput').value = '';
+		document.getElementById('playerNameInput').focus();
+		}
 
     // 명예의 전당에 저장
-    saveToHallOfFame() {
-        const nameInput = document.getElementById('playerNameInput');
-        const name = nameInput.value.trim();
-        
-        if (name.length === 0) {
-            alert('이름을 입력해주세요!');
-            return;
-        }
-        
-        if (name.length > 10) {
-            alert('이름은 10글자 이내로 입력해주세요!');
-            return;
-        }
-        
-        // 실제로 진행한 문제 수를 기준으로 저장
-        const totalAttempted = this.currentQuestion;
-        const saved = this.hallOfFame.saveScore(name, this.score, totalAttempted, this.currentMode);
-        
-        if (saved) {
-            document.getElementById('nameInputSection').classList.add('hidden');
-            alert('명예의 전당에 기록되었습니다! 🎉');
-            
-            // 명예의 전당 버튼 표시
-            const hallBtn = document.getElementById('viewHallOfFameBtn');
-            if (hallBtn) {
-                hallBtn.classList.remove('hidden');
-            }
-        }
-    }
+	async saveToHallOfFame() {
+		const nameInput = document.getElementById('playerNameInput');
+		const name = nameInput.value.trim();
+		
+		if (name.length === 0) {
+			alert('이름을 입력해주세요!');
+			return;
+		}
+		
+		if (name.length > 10) {
+			alert('이름은 10글자 이내로 입력해주세요!');
+			return;
+		}
+		
+		// 저장 중 표시
+		const saveBtn = document.getElementById('saveScoreBtn');
+		saveBtn.textContent = '저장 중...';
+		saveBtn.disabled = true;
+		
+		const totalAttempted = this.currentQuestion;
+		const saved = await this.hallOfFame.saveScore(name, this.score, totalAttempted, this.currentMode, this.elapsedTime);
+		
+		if (saved) {
+			document.getElementById('nameInputSection').classList.add('hidden');
+			alert('명예의 전당에 기록되었습니다! 🎉');
+			
+			const hallBtn = document.getElementById('viewHallOfFameBtn');
+			if (hallBtn) {
+				hallBtn.classList.remove('hidden');
+			}
+		}
+		
+		saveBtn.textContent = '저장';
+		saveBtn.disabled = false;
+	}
 
     // 게임 재시작
     restartGame() {
