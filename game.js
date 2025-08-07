@@ -674,6 +674,12 @@ class FlagQuizGame {
     }
 }
 
+// 메뉴 토글 함수를 전역에 추가
+window.toggleControlPanel = function() {
+    // 현재는 빈 함수로 구현
+    console.log('메뉴 토글 기능은 아직 구현되지 않았습니다.');
+};
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
     // 국가 데이터가 로드되었는지 확인
@@ -687,6 +693,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('대륙별 국가 수:', stats);
     } else {
         console.error('국가 데이터를 로드할 수 없습니다.');
-        document.querySelector('.main-header p').textContent = '데이터 로딩 오류가 발생했습니다.';
+        const subtitle = document.querySelector('.subtitle');
+        if (subtitle) {
+            subtitle.textContent = '데이터 로딩 오류가 발생했습니다.';
+        }
     }
 });
