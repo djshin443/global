@@ -245,15 +245,18 @@ class HallOfFame {
 // 게임 상태 관리 클래스
 class FlagQuizGame {
     constructor() {
-        this.currentMode = 'flag-to-country';
-        this.currentQuestion = 0;
-        this.totalQuestions = 195;  // 전체 국가 수
-        this.score = 0;
-        this.questions = [];
-        this.currentQuestionData = null;
-        this.answered = false;
+		this.currentMode = 'flag-to-country';
+		this.currentQuestion = 0;
+		this.totalQuestions = 195;
+		this.score = 0;
+		this.questions = [];
+		this.currentQuestionData = null;
+		this.answered = false;
 		this.startTime = null;
 		this.elapsedTime = 0;
+		this.wrongCount = 0;  // 틀린 문제 수
+		this.maxWrongCount = 10;  // 최대 틀릴 수 있는 문제 수
+		this.gameOver = false;  // 게임 오버 상태
         
         // 명예의 전당 인스턴스
         this.hallOfFame = new HallOfFame();
@@ -381,6 +384,8 @@ class FlagQuizGame {
 		this.currentQuestion = 0;
 		this.score = 0;
 		this.answered = false;
+		this.wrongCount = 0;  // 틀린 문제 수 초기화
+		this.gameOver = false;  // 게임 오버 상태 초기화
 		this.startTime = Date.now(); // 시간 측정 시작
         
         // UI 초기화
@@ -613,10 +618,10 @@ class FlagQuizGame {
 
     // 문제 표시
     displayQuestion() {
-        if (this.currentQuestion >= this.totalQuestions) {
-            this.showFinalScore();
-            return;
-        }
+		if (this.gameOver || this.currentQuestion >= this.totalQuestions) {
+			this.showFinalScore();
+			return;
+		}
 
         this.currentQuestionData = this.questions[this.currentQuestion];
         this.answered = false;
@@ -631,12 +636,23 @@ class FlagQuizGame {
 
     // 문제 정보 업데이트
 	updateQuestionInfo() {
-		document.getElementById('score').textContent = `점수: ${this.score}/${this.currentQuestion}`;
-        //const progressText = this.currentMode.includes('yuli') 
-        //    ? `율이 모드 ${this.currentQuestion + 1}/${this.totalQuestions} (${Math.round(((this.currentQuestion + 1) / this.totalQuestions) * 100)}% 진행)`
-        //    : `문제 ${this.currentQuestion + 1}/${this.totalQuestions} (${Math.round(((this.currentQuestion + 1) / this.totalQuestions) * 100)}% 진행)`;
-        //document.getElementById('questionNumber').textContent = `문제 ${this.currentQuestion + 1}/${this.totalQuestions}`;
-    }
+		// 1000점 만점으로 현재 점수 계산
+		const maxQuestions = this.currentMode.includes('yuli') ? 34 : 195;
+		const currentScore = Math.round((this.score / maxQuestions) * 1000);
+		const remainingWrong = this.maxWrongCount - this.wrongCount;
+		
+		document.getElementById('score').textContent = `점수: ${currentScore}/1000 (${this.score}/${this.currentQuestion}개 정답)`;
+		
+		// 틀린 문제 수 표시
+		const wrongDisplay = document.getElementById('wrongCount');
+		if (wrongDisplay) {
+			wrongDisplay.textContent = `남은 기회: ${remainingWrong}/10`;
+			if (remainingWrong <= 3) {
+				wrongDisplay.style.color = '#ff6b6b';
+				wrongDisplay.style.fontWeight = 'bold';
+			}
+		}
+	}
 
     // 컨텐츠 표시 (국기, 국가명, 수도명)
     displayContent() {
@@ -769,9 +785,25 @@ class FlagQuizGame {
         this.showResult(isCorrect);
 
         // 점수 업데이트
-        if (isCorrect) {
-            this.score++;
-        }
+		if (isCorrect) {
+			this.score++;
+		} else {
+			this.wrongCount++;
+			// 10문제 틀리면 게임 오버
+			if (this.wrongCount >= this.maxWrongCount) {
+				this.gameOver = true;
+				setTimeout(() => {
+					this.showFinalScore();
+				}, 2000); // 2초 후 게임 오버 화면 표시
+				return;
+			}
+		}
+
+		// 점수 정보 업데이트
+		this.updateQuestionInfo();
+
+		// 다음 문제 버튼 표시
+		document.getElementById('nextBtn').classList.remove('hidden');
 
         // 다음 문제 버튼 표시
         document.getElementById('nextBtn').classList.remove('hidden');
@@ -849,79 +881,108 @@ class FlagQuizGame {
 		
 		const totalAttempted = this.currentQuestion;
 		const maxQuestions = this.currentMode.includes('yuli') ? 34 : 195;
-		const percentage = Math.round((this.score / maxQuestions) * 100);
-		const attemptedPercentage = Math.round((this.score / totalAttempted) * 100);
+		
+		// 1000점 만점 점수 계산
+		const finalScore = Math.round((this.score / maxQuestions) * 1000);
+		const attemptedPercentage = totalAttempted > 0 ? Math.round((this.score / totalAttempted) * 100) : 0;
 		
 		let scoreText = '';
-		if (totalAttempted < this.totalQuestions) {
-			scoreText = `${totalAttempted}개국 도전 중 ${this.score}개국 정답! (${attemptedPercentage}%)`;
+		let headerText = '';
+		
+		if (this.gameOver) {
+			// 게임 오버 상태
+			headerText = '💥 게임 오버!';
+			scoreText = `${this.wrongCount}문제 틀려서 게임 종료<br>${totalAttempted}문제 도전 중 ${this.score}문제 정답<br><strong style="font-size: 1.5em; color: #ffeaa7;">${finalScore}/1000점</strong>`;
+		} else if (totalAttempted < this.totalQuestions) {
+			headerText = '🎯 중간 종료!';
+			scoreText = `${totalAttempted}문제 도전 중 ${this.score}문제 정답<br><strong style="font-size: 1.5em; color: #ffeaa7;">${finalScore}/1000점</strong> (${attemptedPercentage}%)`;
 		} else {
-			scoreText = `전체 ${this.totalQuestions}개국 중 ${this.score}개국 정답! (${attemptedPercentage}%)`;
+			headerText = '🎉 게임 완료!';
+			scoreText = `전체 ${this.totalQuestions}문제 중 ${this.score}문제 정답<br><strong style="font-size: 1.5em; color: #ffeaa7;">${finalScore}/1000점</strong> (${attemptedPercentage}%)`;
 		}
 		
+		// 헤더 텍스트 업데이트
+		document.querySelector('.final-score h2').textContent = headerText;
 		document.getElementById('finalScoreText').innerHTML = scoreText;
 
-        // 점수에 따른 메시지
-        const messageDiv = document.getElementById('scoreMessage');
-        let message = '';
-        let emoji = '';
+		// 점수에 따른 메시지
+		const messageDiv = document.getElementById('scoreMessage');
+		let message = '';
+		let emoji = '';
 
-        // 율이 모드인 경우 특별한 메시지
-        if (this.currentMode.includes('yuli')) {
-            if (percentage === 100) {
-                message = '완벽해요! 율이가 좋아하는 모든 나라를 마스터하셨네요! ✨🏆';
-                emoji = '🏆';
-            } else if (percentage >= 90) {
-                message = '대단해요! 율이 모드 거의 정복! ✨';
-                emoji = '🌟';
-            } else if (percentage >= 70) {
-                message = '잘하셨어요! 율이가 기뻐할 거예요! ✨';
-                emoji = '😊';
-            } else if (percentage >= 50) {
-                message = '좋은 시도예요! 율이와 함께 더 연습해보아요! ✨';
-                emoji = '💪';
-            } else {
-                message = '화이팅! 율이와 함께라면 할 수 있어요! ✨';
-                emoji = '🌱';
-            }
-        } else {
-            if (totalAttempted === this.totalQuestions && percentage === 100) {
-                message = '완벽해요! 세계 모든 국가를 마스터하셨네요! 🌍🏆';
-                emoji = '🏆';
-            } else if (percentage >= 90) {
-                message = '놀라워요! 거의 모든 문제를 맞추셨네요! 🎖️';
-                emoji = '🎖️';
-            } else if (percentage >= 70) {
-                message = '대단해요! 뛰어난 실력이에요! 🌟';
-                emoji = '🌟';
-            } else if (percentage >= 50) {
-                message = '잘하셨어요! 절반 이상을 맞추셨네요! 📚';
-                emoji = '📚';
-            } else if (percentage >= 30) {
-                message = '좋은 시작이에요! 조금만 더 연습하면 훨씬 나아질 거예요! 💪';
-                emoji = '💪';
-            } else {
-                message = '더 열심히 공부해보세요! 다시 도전하면 분명 늘 거예요! 🌱';
-                emoji = '🌱';
-            }
-        }
+		// 점수 구간별 메시지 (1000점 만점 기준)
+		if (this.gameOver) {
+			if (finalScore >= 800) {
+				message = '아깝네요! 거의 다 맞추고 게임 오버가 되었어요! 😢';
+				emoji = '😢';
+			} else if (finalScore >= 600) {
+				message = '좋은 실력이에요! 다시 도전해보세요! 💪';
+				emoji = '💪';
+			} else if (finalScore >= 400) {
+				message = '나쁘지 않아요! 조금 더 연습하면 좋을 것 같아요! 📚';
+				emoji = '📚';
+			} else {
+				message = '다시 도전해보세요! 연습하면 실력이 늘 거예요! 🌱';
+				emoji = '🌱';
+			}
+		} else {
+			// 율이 모드인 경우 특별한 메시지
+			if (this.currentMode.includes('yuli')) {
+				if (finalScore === 1000) {
+					message = '완벽해요! 율이가 좋아하는 모든 나라를 마스터하셨네요! ✨🏆';
+					emoji = '🏆';
+				} else if (finalScore >= 900) {
+					message = '대단해요! 율이 모드 거의 정복! ✨';
+					emoji = '🌟';
+				} else if (finalScore >= 700) {
+					message = '잘하셨어요! 율이가 기뻐할 거예요! ✨';
+					emoji = '😊';
+				} else if (finalScore >= 500) {
+					message = '좋은 시도예요! 율이와 함께 더 연습해보아요! ✨';
+					emoji = '💪';
+				} else {
+					message = '화이팅! 율이와 함께라면 할 수 있어요! ✨';
+					emoji = '🌱';
+				}
+			} else {
+				if (totalAttempted === this.totalQuestions && finalScore === 1000) {
+					message = '완벽해요! 세계 모든 국가를 마스터하셨네요! 🌍🏆';
+					emoji = '🏆';
+				} else if (finalScore >= 900) {
+					message = '놀라워요! 거의 모든 문제를 맞추셨네요! 🎖️';
+					emoji = '🎖️';
+				} else if (finalScore >= 700) {
+					message = '대단해요! 뛰어난 실력이에요! 🌟';
+					emoji = '🌟';
+				} else if (finalScore >= 500) {
+					message = '잘하셨어요! 절반 이상을 맞추셨네요! 📚';
+					emoji = '📚';
+				} else if (finalScore >= 300) {
+					message = '좋은 시작이에요! 조금만 더 연습하면 훨씬 나아질 거예요! 💪';
+					emoji = '💪';
+				} else {
+					message = '더 열심히 공부해보세요! 다시 도전하면 분명 늘 거예요! 🌱';
+					emoji = '🌱';
+				}
+			}
+		}
 
-        const totalCountriesText = this.currentMode.includes('yuli') ? '율이가 좋아하는 34개국' : `전 세계 ${CountryUtils.getTotalCount()}개국`;
-        
-        messageDiv.innerHTML = `
-            <div style="font-size: 4rem; margin: 20px 0; animation: bounceIn 1s ease-out;">${emoji}</div>
-            <div style="font-size: 1.3rem; color: #667eea; font-weight: bold;">${message}</div>
-            <div style="margin-top: 15px; padding: 15px; background: rgba(102,126,234,0.1); border-radius: 15px; font-size: 1rem; color: #333;">
-                ${totalCountriesText} 중 ${totalAttempted}개국 도전<br>
-                정답률: ${percentage}% (${this.score}/${totalAttempted}개국)
-            </div>
-        `;
+		const totalCountriesText = this.currentMode.includes('yuli') ? '율이가 좋아하는 34개국' : `전 세계 ${CountryUtils.getTotalCount()}개국`;
+		
+		messageDiv.innerHTML = `
+			<div style="font-size: 4rem; margin: 20px 0; animation: bounceIn 1s ease-out;">${emoji}</div>
+			<div style="font-size: 1.3rem; color: #667eea; font-weight: bold;">${message}</div>
+			<div style="margin-top: 15px; padding: 15px; background: rgba(102,126,234,0.1); border-radius: 15px; font-size: 1rem; color: #333;">
+				${totalCountriesText} 중 ${totalAttempted}문제 도전<br>
+				최종 점수: <strong>${finalScore}/1000점</strong> | 정답률: ${attemptedPercentage}% | 틀린 문제: ${this.wrongCount}개
+			</div>
+		`;
 
-        // 명예의 전당 입력란 표시
-        document.getElementById('nameInputSection').classList.remove('hidden');
+		// 명예의 전당 입력란 표시
+		document.getElementById('nameInputSection').classList.remove('hidden');
 		document.getElementById('playerNameInput').value = '';
 		document.getElementById('playerNameInput').focus();
-		}
+	}
 
     // 명예의 전당에 저장
 	async saveToHallOfFame() {
