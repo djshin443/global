@@ -12,7 +12,13 @@
     <link rel="icon" type="image/png" href="image.png">
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
+		/* iOS 깜빡임 방지 - 이 부분을 맨 처음에 추가 */
+		html {
+			background: #667eea;
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		:root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             --glass-bg: rgba(255, 255, 255, 0.15);
             --glass-border: rgba(255, 255, 255, 0.25);
@@ -35,26 +41,37 @@
 
         body {
             font-family: 'Jua', 'Noto Sans KR', sans-serif;
-            background: var(--primary-gradient);
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            overflow-x: hidden;
-            position: relative;
-            color: white;
-            line-height: 1.6;
+			background-color: #667eea;  /* 추가 */
+			background: var(--primary-gradient);
+			min-height: 100vh;
+			min-height: -webkit-fill-available;
+			overflow-x: hidden;
+			position: relative;
+			color: white;
+			line-height: 1.6;
+			/* iOS 렌더링 최적화 추가 */
+			-webkit-backface-visibility: hidden;
+			-moz-backface-visibility: hidden;
+			backface-visibility: hidden;
+			-webkit-transform: translate3d(0, 0, 0);
+			-moz-transform: translate3d(0, 0, 0);
+			transform: translate3d(0, 0, 0);
         }
 
         /* 배경 패턴 */
         body::before {
             content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="4"/></g></svg>') repeat;
-            pointer-events: none;
-            z-index: -1;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="4"/></g></svg>') repeat;
+			pointer-events: none;
+			z-index: -1;
+			/* iOS 렌더링 최적화 추가 */
+			-webkit-transform: translateZ(0);
+			transform: translateZ(0);
         }
 
         .container {
@@ -185,6 +202,11 @@
             position: relative;
             overflow: hidden;
             animation: slideInUp 0.8s ease-out;
+			/* iOS 렌더링 최적화 추가 */
+			-webkit-transform: translateZ(0);
+			transform: translateZ(0);
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
         }
 
         .category-card:hover {
@@ -1304,4 +1326,3 @@
 </script>
 </body>
 </html>
-
