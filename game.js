@@ -84,7 +84,7 @@ function startGame(mode) {
 // 명예의 전당 관리 클래스
 class HallOfFame {
     constructor() {
-        this.SHEET_URL = 'https://script.google.com/macros/s/AKfycbwXw_PbAHMi6GjR-Oc6yCJ09TVuNvJ6XqmrhVIYGRxi-5MGTY812bRESFUt2LEdqvTE/exec';
+        this.SHEET_URL = 'https://script.google.com/macros/s/AKfycbx-z0P7TY0DHmyQG-ixMJV7RyE-94jBxvQDL-C1dcOZNe9qKKOTv0q7Fwo_32fAWGTG/exec';
         this.maxEntries = 10;
     }
 
@@ -180,65 +180,101 @@ class HallOfFame {
         return scores[mode] || [];
     }
 
-    // 모든 점수 표시
     async displayAllScores() {
         const container = document.getElementById('hallOfFameContainer');
         if (!container) return;
         
-        container.innerHTML = '<p style="text-align: center; color: white;">점수를 불러오는 중...</p>';
+        // 1️⃣ 로딩 시작 - 스피너 표시
+        container.innerHTML = `
+            <div class="loading-spinner-container">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">
+                    🏆 명예의 전당 불러오는 중<span class="loading-dots"></span>
+                </div>
+            </div>
+        `;
         
-        const scores = await this.getScores();
-        
-        const modeNames = {
-            'flag-to-country': '🏳️ 국기 → 나라명',
-            'country-to-flag': '🌍 나라명 → 국기',
-            'capital-easy': '🏙️ 국기+나라 → 수도',
-            'capital-hard': '🏙️ 국기 → 수도',
-            'capital-to-flag': '🏙️ 수도 → 국기',
-            'capital-easy-yuli': '✨ 율이 모드: 국기+나라 → 수도',
-            'capital-hard-yuli': '✨ 율이 모드: 국기 → 수도',
-            'capital-to-flag-yuli': '✨ 율이 모드: 수도 → 국기'
-        };
-
-        let html = '';
-        for (const mode in modeNames) {
-            const modeScores = scores[mode] || [];
-            html += `<div class="hall-mode-section">`;
-            html += `<h3>${modeNames[mode]}</h3>`;
+        try {
+            // 2️⃣ 데이터 가져오기 (최소 0.8초 로딩 보장)
+            const [scores] = await Promise.all([
+                this.getScores(),
+                new Promise(resolve => setTimeout(resolve, 800))
+            ]);
             
-            if (modeScores.length === 0) {
-                html += `<p class="no-scores">아직 기록이 없습니다</p>`;
-            } else {
-                html += `<table class="score-table">`;
-                html += `<thead><tr><th>순위</th><th>이름</th><th>점수</th><th>정답률</th><th>시간</th><th>날짜</th></tr></thead>`;
-                html += `<tbody>`;
+            // 3️⃣ HTML 생성
+            const modeNames = {
+                'flag-to-country': '🏳️ 국기 → 나라명',
+                'country-to-flag': '🌍 나라명 → 국기',
+                'capital-easy': '🏙️ 국기+나라 → 수도',
+                'capital-hard': '🏙️ 국기 → 수도',
+                'capital-to-flag': '🏙️ 수도 → 국기',
+                'capital-easy-yuli': '✨ 율이 모드: 국기+나라 → 수도',
+                'capital-hard-yuli': '✨ 율이 모드: 국기 → 수도',
+                'capital-to-flag-yuli': '✨ 율이 모드: 수도 → 국기'
+            };
 
-                modeScores.forEach((entry, index) => {
-                    const date = new Date(entry.date);
-                    const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-                    const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-                    
-                    // 시간 포맷팅 (분:초)
-                    const minutes = Math.floor(entry.timeTaken / 60);
-                    const seconds = entry.timeTaken % 60;
-                    const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                    
-                    html += `<tr class="rank-${index + 1}">`;
-                    html += `<td>${medalEmoji} ${index + 1}</td>`;
-                    html += `<td class="player-name">${this.escapeHtml(entry.name)}</td>`;
-                    html += `<td>${entry.score}/${entry.total}</td>`;
-                    html += `<td class="percentage">${entry.percentage}%</td>`;
-                    html += `<td>${timeStr}</td>`;
-                    html += `<td>${dateStr}</td>`;
-                    html += `</tr>`;
-                });
+            let html = '';
+            for (const mode in modeNames) {
+                const modeScores = scores[mode] || [];
+                html += `<div class="hall-mode-section">`;
+                html += `<h3>${modeNames[mode]}</h3>`;
                 
-                html += `</tbody></table>`;
+                if (modeScores.length === 0) {
+                    html += `<p class="no-scores">아직 기록이 없습니다</p>`;
+                } else {
+                    html += `<table class="score-table">`;
+                    html += `<thead><tr><th>순위</th><th>이름</th><th>점수</th><th>정답률</th><th>시간</th><th>날짜</th></tr></thead>`;
+                    html += `<tbody>`;
+
+                    modeScores.forEach((entry, index) => {
+                        const date = new Date(entry.date);
+                        const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
+                        const medalEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                        
+                        const minutes = Math.floor(entry.timeTaken / 60);
+                        const seconds = entry.timeTaken % 60;
+                        const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        
+                        html += `<tr class="rank-${index + 1}">`;
+                        html += `<td>${medalEmoji} ${index + 1}</td>`;
+                        html += `<td class="player-name">${this.escapeHtml(entry.name)}</td>`;
+                        html += `<td>${entry.score}/${entry.total}</td>`;
+                        html += `<td class="percentage">${entry.percentage}%</td>`;
+                        html += `<td>${timeStr}</td>`;
+                        html += `<td>${dateStr}</td>`;
+                        html += `</tr>`;
+                    });
+                    
+                    html += `</tbody></table>`;
+                }
+                html += `</div>`;
             }
-            html += `</div>`;
+            
+            // 4️⃣ 스피너 제거하고 결과 표시 (페이드 인 효과)
+            container.style.opacity = '0';
+            container.innerHTML = html;
+            
+            requestAnimationFrame(() => {
+                container.style.transition = 'opacity 0.5s ease-in';
+                container.style.opacity = '1';
+            });
+            
+        } catch (error) {
+            console.error('점수 불러오기 실패:', error);
+            
+            // 5️⃣ 에러 처리
+            container.innerHTML = `
+                <div class="loading-spinner-container">
+                    <div style="font-size: 3rem;">😢</div>
+                    <div class="loading-text">
+                        점수를 불러올 수 없습니다
+                    </div>
+                    <button class="restart-btn" onclick="window.hallOfFame.displayAllScores()">
+                        다시 시도
+                    </button>
+                </div>
+            `;
         }
-        
-        container.innerHTML = html;
     }
 }
 
@@ -973,7 +1009,7 @@ class FlagQuizGame {
 			<div style="font-size: 4rem; margin: 20px 0; animation: bounceIn 1s ease-out;">${emoji}</div>
 			<div style="font-size: 1.3rem; color: #667eea; font-weight: bold;">${message}</div>
 			<div style="margin-top: 15px; padding: 15px; background: rgba(102,126,234,0.1); border-radius: 15px; font-size: 1rem; color: #333;">
-				${totalCountriesText} 중 ${totalAttempted}문제 도전<br>
+				${totalAttempted}문제 도전<br>
 				최종 점수: <strong>${finalScore}/1000점</strong> | 정답률: ${attemptedPercentage}% | 틀린 문제: ${this.wrongCount}개
 			</div>
 		`;

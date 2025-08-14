@@ -905,32 +905,142 @@
                 width: 200px;
             }
         }
+		
+		/* 로딩 스피너 - 이 부분을 추가하세요 */
+        .loading-spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            gap: 1.5rem;
+        }
 
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .loading-spinner::before,
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+
+        .loading-spinner::before {
+            width: 100%;
+            height: 100%;
+            border-top-color: #ffeaa7;
+            border-right-color: #ffeaa7;
+            animation: spin 2s linear infinite;
+        }
+
+        .loading-spinner::after {
+            width: 75%;
+            height: 75%;
+            border-left-color: #667eea;
+            border-bottom-color: #667eea;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin-reverse 1s linear infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-dots {
+            display: inline-block;
+            width: 60px;
+            text-align: left;
+        }
+
+        .loading-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(3, end) infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-reverse {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+		
+		 /* 텍스트 선택 방지 - 여기에 추가 */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        /* input 필드는 선택 가능 */
+        input, textarea {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        /* 이미지 드래그 방지 */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            pointer-events: none;
+        }
+        
+         /* 클릭 가능한 요소는 포인터 이벤트 허용 */
+        button, .option-btn, .category-card, .mode-card {
+            pointer-events: auto !important;
+        }
+        
+        .wrong-count {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.5rem);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .score-display {
+            font-weight: 700;
+            color: #ffeaa7;
+            font-size: 1.1em;
+        }
+        
         .hidden {
             display: none !important;
         }
-		
-		.wrong-count {
-			font-size: clamp(1rem, 2.5vw, 1.1rem);
-			color: rgba(255,255,255,0.9);
-			font-weight: 500;
-			background: var(--glass-bg);
-			backdrop-filter: blur(10px);
-			-webkit-backdrop-filter: blur(10px);
-			padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.5rem);
-			border-radius: 20px;
-			border: 1px solid var(--glass-border);
-			box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-		}
-		
-		.score-display {
-			font-weight: 700;
-			color: #ffeaa7;
-			font-size: 1.1em;
-		}
-		
     </style>
 </head>
+				
 <body>
     <div class="container">
         <!-- 날짜 헤더 -->
@@ -1143,5 +1253,54 @@
         // 페이지 로드 시 날짜 업데이트
         document.addEventListener('DOMContentLoaded', updateDate);
     </script>
+	
+<script>
+    // 우클릭 방지 (메시지 없음)
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // 텍스트 선택 방지 (input 제외)
+    document.addEventListener('selectstart', function(e) {
+        if (e.target.tagName !== 'INPUT') {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    // 드래그 방지
+    document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // 개발자 도구 단축키 방지
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+        if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+U (소스 보기)
+        if (e.ctrlKey && e.keyCode === 85) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    // 이미지 드래그 방지
+    document.querySelectorAll('img').forEach(img => {
+        img.addEventListener('dragstart', (e) => e.preventDefault());
+        img.style.pointerEvents = 'none';
+        img.style.userSelect = 'none';
+        img.style.webkitUserDrag = 'none';
+    });
+</script>
 </body>
 </html>

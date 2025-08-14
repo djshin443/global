@@ -41,7 +41,7 @@ const countries = [
 { code: 'am', name: '아르메니아', capital: '예레반', continent: 'asia', flag: '🇦🇲' },
 { code: 'az', name: '아제르바이잔', capital: '바쿠', continent: 'asia', flag: '🇦🇿' },
 { code: 'ge', name: '조지아', capital: '트빌리시', continent: 'asia', flag: '🇬🇪' },
-{ code: 'kz', name: '카자흐스탄', capital: '누르술탄', continent: 'asia', flag: '🇰🇿' },
+{ code: 'kz', name: '카자흐스탄', capital: '아스타나', continent: 'asia', flag: '🇰🇿' },
 { code: 'kg', name: '키르기스스탄', capital: '비슈케크', continent: 'asia', flag: '🇰🇬' },
 { code: 'tj', name: '타지키스탄', capital: '두샨베', continent: 'asia', flag: '🇹🇯' },
 { code: 'tm', name: '투르크메니스탄', capital: '아시가바트', continent: 'asia', flag: '🇹🇲' },
@@ -96,11 +96,11 @@ const countries = [
 { code: 'sm', name: '산마리노', capital: '산마리노', continent: 'europe', flag: '🇸🇲' },
 { code: 'va', name: '바티칸', capital: '바티칸', continent: 'europe', flag: '🇻🇦' },
 
-// 아프리카 (54개국)
+// 아프리카 (55개국)
 { code: 'ng', name: '나이지리아', capital: '아부자', continent: 'africa', flag: '🇳🇬' },
 { code: 'et', name: '에티오피아', capital: '아디스아바바', continent: 'africa', flag: '🇪🇹' },
 { code: 'eg', name: '이집트', capital: '카이로', continent: 'africa', flag: '🇪🇬' },
-{ code: 'za', name: '남아프리카공화국', capital: '케이프타운', continent: 'africa', flag: '🇿🇦' },
+{ code: 'za', name: '남아프리카공화국', capital: '프리토리아', continent: 'africa', flag: '🇿🇦' },
 { code: 'ke', name: '케냐', capital: '나이로비', continent: 'africa', flag: '🇰🇪' },
 { code: 'ug', name: '우간다', capital: '캄팔라', continent: 'africa', flag: '🇺🇬' },
 { code: 'dz', name: '알제리', capital: '알제', continent: 'africa', flag: '🇩🇿' },
@@ -150,6 +150,7 @@ const countries = [
 { code: 'mu', name: '모리셔스', capital: '포트루이스', continent: 'africa', flag: '🇲🇺' },
 { code: 'sc', name: '세이셸', capital: '빅토리아', continent: 'africa', flag: '🇸🇨' },
 { code: 'km', name: '코모로', capital: '모로니', continent: 'africa', flag: '🇰🇲' },
+{ code: 'ss', name: '남수단', capital: '주바', continent: 'africa', flag: '🇸🇸' },
 
 // 북아메리카 (23개국)
 { code: 'us', name: '미국', capital: '워싱턴 D.C.', continent: 'america', flag: '🇺🇸' },
@@ -190,13 +191,12 @@ const countries = [
 { code: 'gy', name: '가이아나', capital: '조지타운', continent: 'america', flag: '🇬🇾' },
 { code: 'sr', name: '수리남', capital: '파라마리보', continent: 'america', flag: '🇸🇷' },
 
-// 오세아니아 (14개국)
+// 오세아니아 (13개국)
 { code: 'au', name: '호주', capital: '캔버라', continent: 'oceania', flag: '🇦🇺' },
 { code: 'nz', name: '뉴질랜드', capital: '웰링턴', continent: 'oceania', flag: '🇳🇿' },
 { code: 'pg', name: '파푸아뉴기니', capital: '포트모르즈비', continent: 'oceania', flag: '🇵🇬' },
 { code: 'fj', name: '피지', capital: '수바', continent: 'oceania', flag: '🇫🇯' },
 { code: 'sb', name: '솔로몬제도', capital: '호니아라', continent: 'oceania', flag: '🇸🇧' },
-{ code: 'nc', name: '뉴칼레도니아', capital: '누메아', continent: 'oceania', flag: '🇳🇨' },
 { code: 'vu', name: '바누아투', capital: '포트빌라', continent: 'oceania', flag: '🇻🇺' },
 { code: 'ws', name: '사모아', capital: '아피아', continent: 'oceania', flag: '🇼🇸' },
 { code: 'ki', name: '키리바시', capital: '타라와', continent: 'oceania', flag: '🇰🇮' },
