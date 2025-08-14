@@ -208,9 +208,9 @@ class HallOfFame {
                 'capital-easy': '🏙️ 국기+나라 → 수도',
                 'capital-hard': '🏙️ 국기 → 수도',
                 'capital-to-flag': '🏙️ 수도 → 국기',
-                'capital-easy-yuli': '✨ 율이 모드: 국기+나라 → 수도',
-                'capital-hard-yuli': '✨ 율이 모드: 국기 → 수도',
-                'capital-to-flag-yuli': '✨ 율이 모드: 수도 → 국기'
+                'capital-easy-yuli': '✨ 짜국이 모드: 국기+나라 → 수도',
+                'capital-hard-yuli': '✨ 짜국이 모드: 국기 → 수도',
+                'capital-to-flag-yuli': '✨ 짜국이 모드: 수도 → 국기'
             };
 
             let html = '';
@@ -297,7 +297,7 @@ class FlagQuizGame {
         // 명예의 전당 인스턴스
         this.hallOfFame = new HallOfFame();
         
-        // 율이 모드용 국가 리스트
+        // 짜국이 모드용 국가 리스트
         this.yuliCountries = [
             '한국', '일본', '싱가포르', '중국', '태국', '네팔', '인도', '미얀마',
             '베트남', '필리핀', '프랑스', '독일', '이탈리아', '스위스', '영국',
@@ -306,7 +306,7 @@ class FlagQuizGame {
             '말레이시아', '몽골', '사우디아라비아', '이라크', '이란', '알제리'
         ];
         
-        // 율이 모드 활성화를 위한 변수
+        // 짜국이 모드 활성화를 위한 변수
         this.clickCount = 0;
         this.clickTimer = null;
         this.firstClickTime = null;
@@ -361,7 +361,7 @@ class FlagQuizGame {
         }
     }
     
-    // 율이 모드 활성화 설정
+    // 짜국이 모드 활성화 설정
     setupYuliModeActivation() {
         const capitalMenu = document.getElementById('capitalMenu');
         if (!capitalMenu) return;
@@ -381,16 +381,16 @@ class FlagQuizGame {
         });
     }
     
-    // 율이 모드 표시
+    // 짜국이 모드 표시
     showYuliMode() {
         const yuliModeCard = document.getElementById('yuliModeCard');
         if (yuliModeCard) {
             yuliModeCard.classList.remove('hidden');
             yuliModeCard.style.animation = 'bounceIn 0.8s ease-out';
             
-            // 율이 모드 발견 메시지
+            // 짜국이 모드 발견 메시지
             const message = document.createElement('div');
-            message.textContent = '🎉 율이 모드를 발견하셨습니다! 🎉';
+            message.textContent = '🎉 짜국이 모드를 발견하셨습니다! 🎉';
             message.style.cssText = `
                 position: fixed;
                 top: 50%;
@@ -429,12 +429,12 @@ class FlagQuizGame {
         document.getElementById('nameInputSection').classList.add('hidden');
         document.querySelector('.quiz-container').classList.remove('hidden');
         
-        // 율이 모드 시작 메시지
+        // 짜국이 모드 시작 메시지
         if (mode.includes('yuli')) {
             const message = document.createElement('div');
             message.innerHTML = `
-                <div style="font-size: 2rem; margin-bottom: 10px;">✨ 율이 모드 ✨</div>
-                <div style="font-size: 1.2rem;">율이가 좋아하는 34개국만 도전!</div>
+                <div style="font-size: 2rem; margin-bottom: 10px;">✨ 짜국이 모드 ✨</div>
+                <div style="font-size: 1.2rem;">짜국이가 좋아하는 34개국만 도전!</div>
             `;
             message.style.cssText = `
                 position: fixed;
@@ -464,12 +464,12 @@ class FlagQuizGame {
         this.displayQuestion();
     }
 
-    // 문제 생성 - 195개국 모두 중복 없이 출제 (율이 모드는 34개국)
+    // 문제 생성 - 195개국 모두 중복 없이 출제 (짜국이 모드는 34개국)
     generateQuestions() {
         this.questions = [];
         let countriesToUse = [];
         
-        // 율이 모드인 경우 특정 국가들만 사용
+        // 짜국이 모드인 경우 특정 국가들만 사용
         if (this.currentMode.includes('yuli')) {
             const allCountries = CountryUtils.getAllCountries();
             countriesToUse = allCountries.filter(country => 
@@ -500,7 +500,7 @@ class FlagQuizGame {
             options: []
         };
 
-        // 율이 모드는 일반 모드명에서 -yuli를 제거하고 처리
+        // 짜국이 모드는 일반 모드명에서 -yuli를 제거하고 처리
         const baseMode = this.currentMode.replace('-yuli', '');
 
         switch (baseMode) {
@@ -557,7 +557,7 @@ class FlagQuizGame {
     generateCountryOptions(correctCountry) {
         const options = [correctCountry.name];
         
-        // 율이 모드인 경우 율이 국가들 중에서만 선택
+        // 짜국이 모드인 경우 짜국이 국가들 중에서만 선택
         let availableCountries = [];
         if (this.currentMode.includes('yuli')) {
             const allCountries = CountryUtils.getAllCountries();
@@ -588,7 +588,7 @@ class FlagQuizGame {
             flag: correctCountry.flag
         }];
         
-        // 율이 모드인 경우 율이 국가들 중에서만 선택
+        // 짜국이 모드인 경우 짜국이 국가들 중에서만 선택
         let availableCountries = [];
         if (this.currentMode.includes('yuli')) {
             const allCountries = CountryUtils.getAllCountries();
@@ -619,7 +619,7 @@ class FlagQuizGame {
     generateCapitalOptions(correctCountry) {
         const options = [correctCountry.capital];
         
-        // 율이 모드인 경우 율이 국가들 중에서만 선택
+        // 짜국이 모드인 경우 짜국이 국가들 중에서만 선택
         let availableCountries = [];
         if (this.currentMode.includes('yuli')) {
             const allCountries = CountryUtils.getAllCountries();
@@ -738,7 +738,7 @@ class FlagQuizGame {
         const optionsContainer = document.getElementById('options');
         optionsContainer.innerHTML = '';
 
-        // 율이 모드를 위해 baseMode 추출
+        // 짜국이 모드를 위해 baseMode 추출
         const baseMode = this.currentMode.replace('-yuli', '');
 
         this.currentQuestionData.options.forEach((option, index) => {
@@ -792,7 +792,7 @@ class FlagQuizGame {
             btn.classList.add('disabled');
         });
 
-        // 율이 모드를 위해 baseMode 추출
+        // 짜국이 모드를 위해 baseMode 추출
         const baseMode = this.currentMode.replace('-yuli', '');
 
         // 정답/오답 표시
@@ -853,7 +853,7 @@ class FlagQuizGame {
         let correctAnswerText = '';
         let additionalInfo = '';
 
-        // 율이 모드를 위해 baseMode 추출
+        // 짜국이 모드를 위해 baseMode 추출
         const baseMode = this.currentMode.replace('-yuli', '');
 
         // 모드에 따른 정답 표시
@@ -962,22 +962,22 @@ class FlagQuizGame {
 				emoji = '🌱';
 			}
 		} else {
-			// 율이 모드인 경우 특별한 메시지
+			// 짜국이 모드인 경우 특별한 메시지
 			if (this.currentMode.includes('yuli')) {
 				if (finalScore === 1000) {
-					message = '완벽해요! 율이가 좋아하는 모든 나라를 마스터하셨네요! ✨🏆';
+					message = '완벽해요! 짜국이가 좋아하는 모든 나라를 마스터하셨네요! ✨🏆';
 					emoji = '🏆';
 				} else if (finalScore >= 900) {
-					message = '대단해요! 율이 모드 거의 정복! ✨';
+					message = '대단해요! 짜국이 모드 거의 정복! ✨';
 					emoji = '🌟';
 				} else if (finalScore >= 700) {
-					message = '잘하셨어요! 율이가 기뻐할 거예요! ✨';
+					message = '잘하셨어요! 짜국이가 기뻐할 거예요! ✨';
 					emoji = '😊';
 				} else if (finalScore >= 500) {
-					message = '좋은 시도예요! 율이와 함께 더 연습해보아요! ✨';
+					message = '좋은 시도예요! 짜국이와 함께 더 연습해보아요! ✨';
 					emoji = '💪';
 				} else {
-					message = '화이팅! 율이와 함께라면 할 수 있어요! ✨';
+					message = '화이팅! 짜국이와 함께라면 할 수 있어요! ✨';
 					emoji = '🌱';
 				}
 			} else {
@@ -1003,7 +1003,7 @@ class FlagQuizGame {
 			}
 		}
 
-		const totalCountriesText = this.currentMode.includes('yuli') ? '율이가 좋아하는 34개국' : `전 세계 ${CountryUtils.getTotalCount()}개국`;
+		const totalCountriesText = this.currentMode.includes('yuli') ? '짜국이가 좋아하는 34개국' : `전 세계 ${CountryUtils.getTotalCount()}개국`;
 		
 		messageDiv.innerHTML = `
 			<div style="font-size: 4rem; margin: 20px 0; animation: bounceIn 1s ease-out;">${emoji}</div>
@@ -1102,3 +1102,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
