@@ -926,9 +926,9 @@ class FlagQuizGame {
 		let headerText = '';
 		
 		if (this.gameOver) {
-			// 게임 오버 상태
-			headerText = '💥 게임 오버!';
-			scoreText = `${this.wrongCount}문제 틀려서 게임 종료<br>${totalAttempted}문제 도전 중 ${this.score}문제 정답<br><strong style="font-size: 1.5em; color: #ffeaa7;">${finalScore}/1000점</strong>`;
+			// 게임 오버 상태 - 자연스러운 문구로 변경
+			headerText = '🎯 도전 완료!';
+			scoreText = `${totalAttempted}문제 중 ${this.score}문제 맞추셨습니다<br><strong style="font-size: 1.5em; color: #ffeaa7;">${finalScore}/1000점</strong>`;
 		} else if (totalAttempted < this.totalQuestions) {
 			headerText = '🎯 중간 종료!';
 			scoreText = `${totalAttempted}문제 도전 중 ${this.score}문제 정답<br><strong style="font-size: 1.5em; color: #ffeaa7;">${finalScore}/1000점</strong> (${attemptedPercentage}%)`;
@@ -1035,10 +1035,36 @@ class FlagQuizGame {
 			return;
 		}
 		
-		// 저장 중 표시
+		// 저장 중 표시 (스피너 포함)
 		const saveBtn = document.getElementById('saveScoreBtn');
-		saveBtn.textContent = '저장 중...';
+		const originalText = saveBtn.textContent;
+		saveBtn.innerHTML = `
+			<span style="display: inline-flex; align-items: center; gap: 8px;">
+				<div style="
+					width: 16px; 
+					height: 16px; 
+					border: 2px solid #ffffff40; 
+					border-top: 2px solid #ffffff; 
+					border-radius: 50%; 
+					animation: spin 1s linear infinite;
+				"></div>
+				저장 중...
+			</span>
+		`;
 		saveBtn.disabled = true;
+		
+		// 스피너 애니메이션 CSS 추가 (한 번만)
+		if (!document.getElementById('spinnerStyle')) {
+			const style = document.createElement('style');
+			style.id = 'spinnerStyle';
+			style.textContent = `
+				@keyframes spin {
+					0% { transform: rotate(0deg); }
+					100% { transform: rotate(360deg); }
+				}
+			`;
+			document.head.appendChild(style);
+		}
 		
 		const totalAttempted = this.currentQuestion;
 		const saved = await this.hallOfFame.saveScore(name, this.score, totalAttempted, this.currentMode, this.elapsedTime);
@@ -1053,7 +1079,7 @@ class FlagQuizGame {
 			}
 		}
 		
-		saveBtn.textContent = '저장';
+		saveBtn.innerHTML = originalText;
 		saveBtn.disabled = false;
 	}
 
@@ -1102,4 +1128,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
