@@ -186,28 +186,31 @@ class HallOfFame {
             const scores = await this.getScores();
             const modeScores = scores[mode] || [];
             
-            // 현재 플레이어의 점수 정보
+            // 현재 플레이어 기록을 임시로 추가
             const maxQuestions = mode.includes('yuli') ? 34 : 195;
             const playerPercentage = Math.round((playerScore / maxQuestions) * 100);
             
-            // 순위 계산
-            let rank = 1;
-            for (const entry of modeScores) {
-                // 정답률이 더 높거나
-                if (entry.percentage > playerPercentage) {
-                    rank++;
-                }
-                // 정답률이 같은데 점수가 더 높거나
-                else if (entry.percentage === playerPercentage && entry.score > playerScore) {
-                    rank++;
-                }
-                // 정답률과 점수가 같은데 시간이 더 빠른 경우
-                else if (entry.percentage === playerPercentage && 
-                         entry.score === playerScore && 
-                         entry.timeTaken < timeTaken) {
-                    rank++;
-                }
-            }
+            const playerEntry = {
+                name: playerName,
+                score: playerScore,
+                percentage: playerPercentage,
+                timeTaken: timeTaken,
+                isCurrentPlayer: true
+            };
+            
+            // 임시 배열에 현재 플레이어 추가
+            const allEntries = [...modeScores, playerEntry];
+            
+            // 정렬 (정답률 > 점수 > 시간 > 날짜 순)
+            allEntries.sort((a, b) => {
+                if (b.percentage !== a.percentage) return b.percentage - a.percentage;
+                if (b.score !== a.score) return b.score - a.score;
+                if (a.timeTaken !== b.timeTaken) return a.timeTaken - b.timeTaken;
+                return new Date(b.date || 0) - new Date(a.date || 0);
+            });
+            
+            // 현재 플레이어의 순위 찾기
+            const rank = allEntries.findIndex(entry => entry.isCurrentPlayer) + 1;
             
             return rank;
         } catch (error) {
@@ -985,7 +988,7 @@ class FlagQuizGame {
 		// 점수 구간별 메시지 (1000점 만점 기준)
 		if (this.gameOver) {
 			if (finalScore >= 800) {
-				message = '거의 다 맞았어요! 😢';
+				message = '아깝네요! 거의 다 맞추고 게임 오버가 되었어요! 😢';
 				emoji = '😢';
 			} else if (finalScore >= 600) {
 				message = '좋은 실력이에요! 다시 도전해보세요! 💪';
