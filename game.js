@@ -180,6 +180,42 @@ class HallOfFame {
         return scores[mode] || [];
     }
 
+    // 플레이어 순위 계산
+    async getPlayerRank(playerName, playerScore, mode, timeTaken) {
+        try {
+            const scores = await this.getScores();
+            const modeScores = scores[mode] || [];
+            
+            // 현재 플레이어의 점수 정보
+            const maxQuestions = mode.includes('yuli') ? 34 : 195;
+            const playerPercentage = Math.round((playerScore / maxQuestions) * 100);
+            
+            // 순위 계산
+            let rank = 1;
+            for (const entry of modeScores) {
+                // 정답률이 더 높거나
+                if (entry.percentage > playerPercentage) {
+                    rank++;
+                }
+                // 정답률이 같은데 점수가 더 높거나
+                else if (entry.percentage === playerPercentage && entry.score > playerScore) {
+                    rank++;
+                }
+                // 정답률과 점수가 같은데 시간이 더 빠른 경우
+                else if (entry.percentage === playerPercentage && 
+                         entry.score === playerScore && 
+                         entry.timeTaken < timeTaken) {
+                    rank++;
+                }
+            }
+            
+            return rank;
+        } catch (error) {
+            console.error('순위 계산 실패:', error);
+            return '?';
+        }
+    }
+
     async displayAllScores() {
         const container = document.getElementById('hallOfFameContainer');
         if (!container) return;
@@ -1022,65 +1058,232 @@ class FlagQuizGame {
 
     // 명예의 전당에 저장
 	async saveToHallOfFame() {
-		const nameInput = document.getElementById('playerNameInput');
-		const name = nameInput.value.trim();
-		
-		if (name.length === 0) {
-			alert('이름을 입력해주세요!');
-			return;
-		}
-		
-		if (name.length > 10) {
-			alert('이름은 10글자 이내로 입력해주세요!');
-			return;
-		}
-		
-		// 저장 중 표시 (스피너 포함)
-		const saveBtn = document.getElementById('saveScoreBtn');
-		const originalText = saveBtn.textContent;
-		saveBtn.innerHTML = `
-			<span style="display: inline-flex; align-items: center; gap: 8px;">
-				<div style="
-					width: 16px; 
-					height: 16px; 
-					border: 2px solid #ffffff40; 
-					border-top: 2px solid #ffffff; 
-					border-radius: 50%; 
-					animation: spin 1s linear infinite;
-				"></div>
-				저장 중...
-			</span>
-		`;
-		saveBtn.disabled = true;
-		
-		// 스피너 애니메이션 CSS 추가 (한 번만)
-		if (!document.getElementById('spinnerStyle')) {
-			const style = document.createElement('style');
-			style.id = 'spinnerStyle';
-			style.textContent = `
-				@keyframes spin {
-					0% { transform: rotate(0deg); }
-					100% { transform: rotate(360deg); }
-				}
-			`;
-			document.head.appendChild(style);
-		}
-		
-		const totalAttempted = this.currentQuestion;
-		const saved = await this.hallOfFame.saveScore(name, this.score, totalAttempted, this.currentMode, this.elapsedTime);
-		
-		if (saved) {
-			document.getElementById('nameInputSection').classList.add('hidden');
-			alert('명예의 전당에 기록되었습니다! 🎉');
-			
-			const hallBtn = document.getElementById('viewHallOfFameBtn');
-			if (hallBtn) {
-				hallBtn.classList.remove('hidden');
-			}
-		}
-		
-		saveBtn.innerHTML = originalText;
-		saveBtn.disabled = false;
+	    const nameInput = document.getElementById('playerNameInput');
+	    const name = nameInput.value.trim();
+	    
+	    if (name.length === 0) {
+	        alert('이름을 입력해주세요!');
+	        return;
+	    }
+	    
+	    if (name.length > 10) {
+	        alert('이름은 10글자 이내로 입력해주세요!');
+	        return;
+	    }
+	    
+	    // 로딩 오버레이 생성
+	    const loadingOverlay = document.createElement('div');
+	    loadingOverlay.style.cssText = `
+	        position: fixed;
+	        top: 0;
+	        left: 0;
+	        right: 0;
+	        bottom: 0;
+	        background: rgba(0, 0, 0, 0.8);
+	        z-index: 9999;
+	        display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        backdrop-filter: blur(5px);
+	    `;
+	    
+	    const loadingContent = document.createElement('div');
+	    loadingContent.style.cssText = `
+	        text-align: center;
+	        color: white;
+	    `;
+	    
+	    loadingContent.innerHTML = `
+	        <div style="
+	            width: 80px;
+	            height: 80px;
+	            border: 4px solid rgba(255,255,255,0.3);
+	            border-top: 4px solid #ffeaa7;
+	            border-radius: 50%;
+	            margin: 0 auto 20px;
+	            animation: spin 1s linear infinite;
+	        "></div>
+	        <div style="font-size: 1.2rem; font-weight: 600;">
+	            점수 저장 중...
+	        </div>
+	        <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">
+	            명예의 전당에 기록하고 있습니다
+	        </div>
+	    `;
+	    
+	    loadingOverlay.appendChild(loadingContent);
+	    document.body.appendChild(loadingOverlay);
+	    
+	    // 저장 버튼 비활성화
+	    const saveBtn = document.getElementById('saveScoreBtn');
+	    saveBtn.disabled = true;
+	    
+	    // 스피너 애니메이션 CSS 추가 (한 번만)
+	    if (!document.getElementById('spinnerStyle')) {
+	        const style = document.createElement('style');
+	        style.id = 'spinnerStyle';
+	        style.textContent = `
+	            @keyframes spin {
+	                0% { transform: rotate(0deg); }
+	                100% { transform: rotate(360deg); }
+	            }
+	        `;
+	        document.head.appendChild(style);
+	    }
+	    
+	    try {
+	        const totalAttempted = this.currentQuestion;
+	        const saved = await this.hallOfFame.saveScore(name, this.score, totalAttempted, this.currentMode, this.elapsedTime);
+	        
+	        if (saved) {
+	            // 순위 계산
+	            const rank = await this.hallOfFame.getPlayerRank(name, this.score, this.currentMode, this.elapsedTime);
+	            
+	            // 로딩 오버레이 제거
+	            loadingOverlay.remove();
+	            
+	            // 순위 결과 표시
+	            this.showRankResult(rank, name);
+	            
+	            document.getElementById('nameInputSection').classList.add('hidden');
+	            
+	            const hallBtn = document.getElementById('viewHallOfFameBtn');
+	            if (hallBtn) {
+	                hallBtn.classList.remove('hidden');
+	            }
+	        }
+	    } catch (error) {
+	        console.error('저장 실패:', error);
+	        loadingOverlay.remove();
+	        alert('저장에 실패했습니다. 다시 시도해주세요.');
+	    } finally {
+	        saveBtn.disabled = false;
+	    }
+	}
+	
+	// 순위 결과 표시
+	showRankResult(rank, playerName) {
+	    const modeNames = {
+	        'flag-to-country': '국기 → 나라명',
+	        'country-to-flag': '나라명 → 국기',
+	        'capital-easy': '국기+나라 → 수도',
+	        'capital-hard': '국기 → 수도',
+	        'capital-to-flag': '수도 → 국기',
+	        'capital-easy-yuli': '짜국이: 국기+나라 → 수도',
+	        'capital-hard-yuli': '짜국이: 국기 → 수도',
+	        'capital-to-flag-yuli': '짜국이: 수도 → 국기'
+	    };
+	    
+	    const modeName = modeNames[this.currentMode];
+	    let rankEmoji = '';
+	    let rankMessage = '';
+	    
+	    if (rank === 1) {
+	        rankEmoji = '🥇';
+	        rankMessage = '축하합니다! 1등입니다!';
+	    } else if (rank === 2) {
+	        rankEmoji = '🥈';
+	        rankMessage = '대단해요! 2등입니다!';
+	    } else if (rank === 3) {
+	        rankEmoji = '🥉';
+	        rankMessage = '잘했어요! 3등입니다!';
+	    } else if (rank <= 5) {
+	        rankEmoji = '🏆';
+	        rankMessage = `훌륭해요! ${rank}등입니다!`;
+	    } else if (rank <= 10) {
+	        rankEmoji = '⭐';
+	        rankMessage = `좋아요! ${rank}등입니다!`;
+	    } else {
+	        rankEmoji = '✨';
+	        rankMessage = `${rank}등입니다! 계속 도전하세요!`;
+	    }
+	    
+	    // 오버레이 생성
+	    const overlay = document.createElement('div');
+	    overlay.style.cssText = `
+	        position: fixed;
+	        top: 0;
+	        left: 0;
+	        right: 0;
+	        bottom: 0;
+	        background: rgba(0, 0, 0, 0.7);
+	        z-index: 9999;
+	        display: flex;
+	        align-items: center;
+	        justify-content: center;
+	        padding: 20px;
+	        opacity: 0;
+	        transition: opacity 0.3s ease-in;
+	    `;
+	    
+	    // 팝업 생성
+	    const popup = document.createElement('div');
+	    popup.style.cssText = `
+	        background: linear-gradient(135deg, #667eea, #764ba2);
+	        color: white;
+	        padding: 30px;
+	        border-radius: 25px;
+	        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+	        text-align: center;
+	        width: 90%;
+	        max-width: 400px;
+	        transform: scale(0.8);
+	        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	    `;
+	    
+	    popup.innerHTML = `
+	        <div style="font-size: clamp(3rem, 10vw, 4rem); margin-bottom: 20px;">${rankEmoji}</div>
+	        <h2 style="font-size: clamp(1.5rem, 5vw, 2rem); margin-bottom: 15px; font-family: 'Jua', sans-serif;">
+	            ${rankMessage}
+	        </h2>
+	        <div style="font-size: clamp(1rem, 3vw, 1.2rem); margin-bottom: 10px;">
+	            <strong>${playerName}</strong>님의 기록이
+	        </div>
+	        <div style="font-size: clamp(0.9rem, 2.5vw, 1.1rem); margin-bottom: 20px; opacity: 0.9;">
+	            [${modeName}] 모드에서<br>
+	            <strong style="font-size: clamp(1.1rem, 3vw, 1.3rem); color: #ffeaa7;">${rank}위</strong>로 등록되었습니다!
+	        </div>
+	        <button id="closeRankPopup" style="
+	            background: rgba(255,255,255,0.2);
+	            border: 2px solid white;
+	            color: white;
+	            padding: 12px 30px;
+	            border-radius: 20px;
+	            font-size: clamp(1rem, 3vw, 1.1rem);
+	            font-weight: 600;
+	            cursor: pointer;
+	            transition: all 0.3s ease;
+	            min-width: 100px;
+	        ">확인</button>
+	    `;
+	    
+	    overlay.appendChild(popup);
+	    document.body.appendChild(overlay);
+	    
+	    // 애니메이션 시작
+	    requestAnimationFrame(() => {
+	        overlay.style.opacity = '1';
+	        popup.style.transform = 'scale(1)';
+	    });
+	    
+	    // 닫기 버튼 이벤트
+	    const closeBtn = document.getElementById('closeRankPopup');
+	    closeBtn.addEventListener('click', () => {
+	        overlay.style.opacity = '0';
+	        popup.style.transform = 'scale(0.8)';
+	        setTimeout(() => overlay.remove(), 300);
+	    });
+	    
+	    // 버튼 호버 효과
+	    closeBtn.addEventListener('mouseenter', () => {
+	        closeBtn.style.background = 'rgba(255,255,255,0.3)';
+	        closeBtn.style.transform = 'scale(1.05)';
+	    });
+	    
+	    closeBtn.addEventListener('mouseleave', () => {
+	        closeBtn.style.background = 'rgba(255,255,255,0.2)';
+	        closeBtn.style.transform = 'scale(1)';
+	    });
 	}
 
     // 게임 재시작
