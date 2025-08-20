@@ -985,7 +985,7 @@ class FlagQuizGame {
 		// 점수 구간별 메시지 (1000점 만점 기준)
 		if (this.gameOver) {
 			if (finalScore >= 800) {
-				message = '아깝네요! 거의 다 맞추고 게임 오버가 되었어요! 😢';
+				message = '거의 다 맞았어요! 😢';
 				emoji = '😢';
 			} else if (finalScore >= 600) {
 				message = '좋은 실력이에요! 다시 도전해보세요! 💪';
@@ -1071,51 +1071,22 @@ class FlagQuizGame {
 	        return;
 	    }
 	    
-	    // 로딩 오버레이 생성
-	    const loadingOverlay = document.createElement('div');
-	    loadingOverlay.style.cssText = `
-	        position: fixed;
-	        top: 0;
-	        left: 0;
-	        right: 0;
-	        bottom: 0;
-	        background: rgba(0, 0, 0, 0.8);
-	        z-index: 9999;
-	        display: flex;
-	        align-items: center;
-	        justify-content: center;
-	        backdrop-filter: blur(5px);
-	    `;
-	    
-	    const loadingContent = document.createElement('div');
-	    loadingContent.style.cssText = `
-	        text-align: center;
-	        color: white;
-	    `;
-	    
-	    loadingContent.innerHTML = `
-	        <div style="
-	            width: 80px;
-	            height: 80px;
-	            border: 4px solid rgba(255,255,255,0.3);
-	            border-top: 4px solid #ffeaa7;
-	            border-radius: 50%;
-	            margin: 0 auto 20px;
-	            animation: spin 1s linear infinite;
-	        "></div>
-	        <div style="font-size: 1.2rem; font-weight: 600;">
-	            점수 저장 중...
-	        </div>
-	        <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">
-	            명예의 전당에 기록하고 있습니다
-	        </div>
-	    `;
-	    
-	    loadingOverlay.appendChild(loadingContent);
-	    document.body.appendChild(loadingOverlay);
-	    
-	    // 저장 버튼 비활성화
+	    // 저장 중 표시 (스피너 포함)
 	    const saveBtn = document.getElementById('saveScoreBtn');
+	    const originalText = saveBtn.textContent;
+	    saveBtn.innerHTML = `
+	        <span style="display: inline-flex; align-items: center; gap: 8px;">
+	            <div style="
+	                width: 16px; 
+	                height: 16px; 
+	                border: 2px solid #ffffff40; 
+	                border-top: 2px solid #ffffff; 
+	                border-radius: 50%; 
+	                animation: spin 1s linear infinite;
+	            "></div>
+	            저장 중...
+	        </span>
+	    `;
 	    saveBtn.disabled = true;
 	    
 	    // 스피너 애니메이션 CSS 추가 (한 번만)
@@ -1139,9 +1110,6 @@ class FlagQuizGame {
 	            // 순위 계산
 	            const rank = await this.hallOfFame.getPlayerRank(name, this.score, this.currentMode, this.elapsedTime);
 	            
-	            // 로딩 오버레이 제거
-	            loadingOverlay.remove();
-	            
 	            // 순위 결과 표시
 	            this.showRankResult(rank, name);
 	            
@@ -1154,9 +1122,9 @@ class FlagQuizGame {
 	        }
 	    } catch (error) {
 	        console.error('저장 실패:', error);
-	        loadingOverlay.remove();
 	        alert('저장에 실패했습니다. 다시 시도해주세요.');
 	    } finally {
+	        saveBtn.innerHTML = originalText;
 	        saveBtn.disabled = false;
 	    }
 	}
