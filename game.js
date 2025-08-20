@@ -133,7 +133,7 @@ class HallOfFame {
     }
 
     // 점수 불러오기 (Google Sheets에서)
-    async getScores() {
+    async getScores(includeAll = false) {
         try {
             const response = await fetch(this.SHEET_URL);
             const allScores = await response.json();
@@ -147,7 +147,7 @@ class HallOfFame {
                 groupedScores[score.mode].push(score);
             });
             
-            // 각 모드별로 정렬하고 상위 10개만
+            // 각 모드별로 정렬하고 제한
             for (const mode in groupedScores) {
                 groupedScores[mode].sort((a, b) => {
                     if (b.percentage !== a.percentage) return b.percentage - a.percentage;
@@ -155,7 +155,11 @@ class HallOfFame {
                     if (a.timeTaken !== b.timeTaken) return a.timeTaken - b.timeTaken;
                     return new Date(b.date) - new Date(a.date);
                 });
-                groupedScores[mode] = groupedScores[mode].slice(0, this.maxEntries);
+                
+                // includeAll이 true면 전체 반환, false면 10개만
+                if (!includeAll) {
+                    groupedScores[mode] = groupedScores[mode].slice(0, this.maxEntries);
+                }
             }
             
             return groupedScores;
@@ -183,7 +187,7 @@ class HallOfFame {
     // 플레이어 순위 계산
     async getPlayerRank(playerName, playerScore, mode, timeTaken) {
         try {
-            const scores = await this.getScores();
+            const scores = await this.getScores(true); // 전체 데이터 가져오기
             const modeScores = scores[mode] || [];
             
             // 현재 플레이어 기록을 임시로 추가
